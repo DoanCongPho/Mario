@@ -1,0 +1,25 @@
+# Ignore VSCode settings
+.vscode/
+
+# Ignore build and object directories
+/build/
+/obj/
+
+# Ignore compiled executable
+MarioGame
+*.out
+
+# Ignore temporary files created by IDEs or editors
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore CMake-related files (if applicable)
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles/
+Makefile.user
