@@ -13,7 +13,6 @@ MarioGame
 *.swp
 *.swo
 .idea/
-.vscode/
 
 # Ignore macOS system files
 .DS_Store
@@ -22,4 +21,6 @@ MarioGame
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles/
+
+# Ignore user-specific Makefile settings
 Makefile.user
