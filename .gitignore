@@ -17,10 +17,5 @@ MarioGame
 # Ignore macOS system files
 .DS_Store
 
-# Ignore CMake-related files (if applicable)
-CMakeLists.txt.user
-CMakeCache.txt
-CMakeFiles/
 
-# Ignore user-specific Makefile settings
-Makefile.user
+Makefile
