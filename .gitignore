@@ -13,6 +13,13 @@ MarioGame
 *.swp
 *.swo
 .idea/
+/src/.vs
+*.sln
+*.vcxproj
+*.filters
+*.user
+/src/Mario
+/src/x64
 
 # Ignore macOS system files
 .DS_Store
