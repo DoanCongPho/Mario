@@ -26,3 +26,6 @@ MarioGame
 
 
 Makefile
+/.vs
+/Mario/x64
+/x64
