@@ -1,185 +1,290 @@
-
+/*******************************************************************************************
+*
+*   raylib [texture] example - Import and display of Tiled map editor map
+*
+*   This example has been created using raylib 2.0 (www.raylib.com)
+*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
+*
+*   Copyright (c) 2017 Ramon Santamaria (@raysan5)
+*
+********************************************************************************************/
+#include <stdlib.h>
 
 #include "raylib.h"
+#include "tmx.h"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-int main(void)
+
+// Helper function for the TMX lib to load a texture from a file
+Texture2D *LoadMapTexture(const char *fileName);
+
+// Helper function for the TMX lib to unload a texture that was previously loaded
+void UnloadMapTexture(Texture2D *tex);
+
+// Read a Tile map editor TMX map file and render the map into RenderTexture2D.
+// This is the main part of this example.
+// This must be called after InitWindow().
+void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf);
+
+// Frame buffer into which the map is rendered
+RenderTexture2D mapFrameBuffer;
+
+int main()
 {
     // Initialization
-    //---------------------------------------------------------
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    //--------------------------------------------------------------------------------------
+    int screenWidth = 800;
+    int screenHeight = 640;
+    Vector2 player;     // This player doesn't have a box or a sprite. It's just a point.
+    Camera2D camera;
 
-    // Possible window flags
-    /*
-    FLAG_VSYNC_HINT
-    FLAG_FULLSCREEN_MODE    -> not working properly -> wrong scaling!
-    FLAG_WINDOW_RESIZABLE
-    FLAG_WINDOW_UNDECORATED
-    FLAG_WINDOW_TRANSPARENT
-    FLAG_WINDOW_HIDDEN
-    FLAG_WINDOW_MINIMIZED   -> Not supported on window creation
-    FLAG_WINDOW_MAXIMIZED   -> Not supported on window creation
-    FLAG_WINDOW_UNFOCUSED
-    FLAG_WINDOW_TOPMOST
-    FLAG_WINDOW_HIGHDPI     -> errors after minimize-resize, fb size is recalculated
-    FLAG_WINDOW_ALWAYS_RUN
-    FLAG_MSAA_4X_HINT
-    */
-
-    // Set configuration flags for window creation
-    //SetConfigFlags(FLAG_VSYNC_HINT | FLAG_MSAA_4X_HINT | FLAG_WINDOW_HIGHDPI);
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - window flags");
-
-    Vector2 ballPosition = { GetScreenWidth() / 2.0f, GetScreenHeight() / 2.0f };
-    Vector2 ballSpeed = { 5.0f, 4.0f };
-    float ballRadius = 20;
-
-    int framesCounter = 0;
-
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //----------------------------------------------------------
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
+    
+    // Load Tiled TMX map and render it to the frame buffer
+    RenderTmxMapToFramebuf("Resources/untitled.tmx", &mapFrameBuffer);
+    
+    player.x = screenWidth / 2;
+    player.y = screenHeight / 2;
+    camera.target = (Vector2){ player.x, player.y };
+    camera.offset = (Vector2){ 0, 0 };
+    camera.rotation = 0.0;
+    camera.zoom = 1.0;
+    
+    SetTargetFPS(60);
+    //--------------------------------------------------------------------------------------
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
-        //-----------------------------------------------------
-        if (IsKeyPressed(KEY_F)) ToggleFullscreen();  // modifies window size when scaling!
-
-        if (IsKeyPressed(KEY_R))
+        //----------------------------------------------------------------------------------
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
         {
-            if (IsWindowState(FLAG_WINDOW_RESIZABLE)) ClearWindowState(FLAG_WINDOW_RESIZABLE);
-            else SetWindowState(FLAG_WINDOW_RESIZABLE);
+            player.x += 4;              // Player movement
+            camera.offset.x -= 4;       // Camera displacement with player movement
         }
-
-        if (IsKeyPressed(KEY_D))
+        else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
         {
-            if (IsWindowState(FLAG_WINDOW_UNDECORATED)) ClearWindowState(FLAG_WINDOW_UNDECORATED);
-            else SetWindowState(FLAG_WINDOW_UNDECORATED);
+            player.x -= 4;              // Player movement
+            camera.offset.x += 4;       // Camera displacement with player movement
         }
-
-        if (IsKeyPressed(KEY_H))
+        else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
         {
-            if (!IsWindowState(FLAG_WINDOW_HIDDEN)) SetWindowState(FLAG_WINDOW_HIDDEN);
-
-            framesCounter = 0;
+            player.y += 4;              // Player movement
+            camera.offset.y -= 4;       // Camera displacement with player movement
         }
-
-        if (IsWindowState(FLAG_WINDOW_HIDDEN))
+        else if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
         {
-            framesCounter++;
-            if (framesCounter >= 240) ClearWindowState(FLAG_WINDOW_HIDDEN); // Show window after 3 seconds
+            player.y -= 4;              // Player movement
+            camera.offset.y += 4;       // Camera displacement with player movement
         }
-
-        if (IsKeyPressed(KEY_N))
-        {
-            if (!IsWindowState(FLAG_WINDOW_MINIMIZED)) MinimizeWindow();
-
-            framesCounter = 0;
-        }
-
-        if (IsWindowState(FLAG_WINDOW_MINIMIZED))
-        {
-            framesCounter++;
-            if (framesCounter >= 240) RestoreWindow(); // Restore window after 3 seconds
-        }
-
-        if (IsKeyPressed(KEY_M))
-        {
-            // NOTE: Requires FLAG_WINDOW_RESIZABLE enabled!
-            if (IsWindowState(FLAG_WINDOW_MAXIMIZED)) RestoreWindow();
-            else MaximizeWindow();
-        }
-
-        if (IsKeyPressed(KEY_U))
-        {
-            if (IsWindowState(FLAG_WINDOW_UNFOCUSED)) ClearWindowState(FLAG_WINDOW_UNFOCUSED);
-            else SetWindowState(FLAG_WINDOW_UNFOCUSED);
-        }
-
-        if (IsKeyPressed(KEY_T))
-        {
-            if (IsWindowState(FLAG_WINDOW_TOPMOST)) ClearWindowState(FLAG_WINDOW_TOPMOST);
-            else SetWindowState(FLAG_WINDOW_TOPMOST);
-        }
-
-        if (IsKeyPressed(KEY_A))
-        {
-            if (IsWindowState(FLAG_WINDOW_ALWAYS_RUN)) ClearWindowState(FLAG_WINDOW_ALWAYS_RUN);
-            else SetWindowState(FLAG_WINDOW_ALWAYS_RUN);
-        }
-
-        if (IsKeyPressed(KEY_V))
-        {
-            if (IsWindowState(FLAG_VSYNC_HINT)) ClearWindowState(FLAG_VSYNC_HINT);
-            else SetWindowState(FLAG_VSYNC_HINT);
-        }
-
-        // Bouncing ball logic
-        ballPosition.x += ballSpeed.x;
-        ballPosition.y += ballSpeed.y;
-        if ((ballPosition.x >= (GetScreenWidth() - ballRadius)) || (ballPosition.x <= ballRadius)) ballSpeed.x *= -1.0f;
-        if ((ballPosition.y >= (GetScreenHeight() - ballRadius)) || (ballPosition.y <= ballRadius)) ballSpeed.y *= -1.0f;
-        //-----------------------------------------------------
+        // Camera target follows player
+        camera.target = (Vector2){ player.x, player.y };
+        //----------------------------------------------------------------------------------
 
         // Draw
-        //-----------------------------------------------------
+        //----------------------------------------------------------------------------------
         BeginDrawing();
+            ClearBackground(RAYWHITE);
 
-        if (IsWindowState(FLAG_WINDOW_TRANSPARENT)) ClearBackground(BLANK);
-        else ClearBackground(RAYWHITE);
-
-        DrawCircleV(ballPosition, ballRadius, MAROON);
-        DrawRectangleLinesEx(Rectangle { 0, 0, (float)GetScreenWidth(), (float)GetScreenHeight() }, 4, RAYWHITE);
-
-        DrawCircleV(GetMousePosition(), 10, DARKBLUE);
-
-        DrawFPS(10, 10);
-
-        DrawText(TextFormat("Screen Size: [%i, %i]", GetScreenWidth(), GetScreenHeight()), 10, 40, 10, GREEN);
-
-        // Draw window state info
-        DrawText("Following flags can be set after window creation:", 10, 60, 10, GRAY);
-        if (IsWindowState(FLAG_FULLSCREEN_MODE)) DrawText("[F] FLAG_FULLSCREEN_MODE: on", 10, 80, 10, LIME);
-        else DrawText("[F] FLAG_FULLSCREEN_MODE: off", 10, 80, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_RESIZABLE)) DrawText("[R] FLAG_WINDOW_RESIZABLE: on", 10, 100, 10, LIME);
-        else DrawText("[R] FLAG_WINDOW_RESIZABLE: off", 10, 100, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_UNDECORATED)) DrawText("[D] FLAG_WINDOW_UNDECORATED: on", 10, 120, 10, LIME);
-        else DrawText("[D] FLAG_WINDOW_UNDECORATED: off", 10, 120, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_HIDDEN)) DrawText("[H] FLAG_WINDOW_HIDDEN: on", 10, 140, 10, LIME);
-        else DrawText("[H] FLAG_WINDOW_HIDDEN: off", 10, 140, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_MINIMIZED)) DrawText("[N] FLAG_WINDOW_MINIMIZED: on", 10, 160, 10, LIME);
-        else DrawText("[N] FLAG_WINDOW_MINIMIZED: off", 10, 160, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_MAXIMIZED)) DrawText("[M] FLAG_WINDOW_MAXIMIZED: on", 10, 180, 10, LIME);
-        else DrawText("[M] FLAG_WINDOW_MAXIMIZED: off", 10, 180, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_UNFOCUSED)) DrawText("[G] FLAG_WINDOW_UNFOCUSED: on", 10, 200, 10, LIME);
-        else DrawText("[U] FLAG_WINDOW_UNFOCUSED: off", 10, 200, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_TOPMOST)) DrawText("[T] FLAG_WINDOW_TOPMOST: on", 10, 220, 10, LIME);
-        else DrawText("[T] FLAG_WINDOW_TOPMOST: off", 10, 220, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_ALWAYS_RUN)) DrawText("[A] FLAG_WINDOW_ALWAYS_RUN: on", 10, 240, 10, LIME);
-        else DrawText("[A] FLAG_WINDOW_ALWAYS_RUN: off", 10, 240, 10, MAROON);
-        if (IsWindowState(FLAG_VSYNC_HINT)) DrawText("[V] FLAG_VSYNC_HINT: on", 10, 260, 10, LIME);
-        else DrawText("[V] FLAG_VSYNC_HINT: off", 10, 260, 10, MAROON);
-
-        DrawText("Following flags can only be set before window creation:", 10, 300, 10, GRAY);
-        if (IsWindowState(FLAG_WINDOW_HIGHDPI)) DrawText("FLAG_WINDOW_HIGHDPI: on", 10, 320, 10, LIME);
-        else DrawText("FLAG_WINDOW_HIGHDPI: off", 10, 320, 10, MAROON);
-        if (IsWindowState(FLAG_WINDOW_TRANSPARENT)) DrawText("FLAG_WINDOW_TRANSPARENT: on", 10, 340, 10, LIME);
-        else DrawText("FLAG_WINDOW_TRANSPARENT: off", 10, 340, 10, MAROON);
-        if (IsWindowState(FLAG_MSAA_4X_HINT)) DrawText("FLAG_MSAA_4X_HINT: on", 10, 360, 10, LIME);
-        else DrawText("FLAG_MSAA_4X_HINT: off", 10, 360, 10, MAROON);
-
+            BeginMode2D(camera);
+                // Flip along the y axis because OpenGL origin is at bottom left corner while Raylib is top left
+                DrawTextureRec(
+                    mapFrameBuffer.texture,
+                               (Rectangle){0.0f, 0.0f, static_cast<float>(mapFrameBuffer.texture.width), static_cast<float>(-mapFrameBuffer.texture.height)},
+                    (Vector2){0.0, 0.0},
+                    WHITE);
+            EndMode2D();
         EndDrawing();
-        //-----------------------------------------------------
+        //----------------------------------------------------------------------------------
     }
 
     // De-Initialization
-    //---------------------------------------------------------
+    //--------------------------------------------------------------------------------------
+    UnloadRenderTexture(mapFrameBuffer);
     CloseWindow();        // Close window and OpenGL context
-    //----------------------------------------------------------
+    //--------------------------------------------------------------------------------------
 
     return 0;
+}
+
+Texture2D *LoadMapTexture(const char *fileName)
+{
+    Texture2D *tex = (Texture2D *)malloc(sizeof(Texture2D));
+    if (tex != NULL)
+    {
+        *tex = LoadTexture(fileName);
+        TraceLog(LOG_INFO, "TMX texture loaded from %s", fileName);
+        return tex;
+    }
+    return NULL;
+}
+
+void UnloadMapTexture(Texture2D *tex)
+{
+    if (tex != NULL)
+    {
+        UnloadTexture(*tex);
+        free(tex);
+    }
+}
+
+void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
+{
+    unsigned long row, col;
+    unsigned int gid;
+    unsigned int flip;
+    tmx_tile *tile;
+    unsigned int tile_width;
+    unsigned int tile_height;
+    Rectangle sourceRect;
+    Rectangle destRect;
+    Texture2D *tsTexture; // tileset texture
+    float rotation = 0.0;
+    Vector2 origin = {0.0, 0.0};
+
+    for (row = 0; row < map->height; row++)
+    {
+        for (col = 0; col < map->width; col++)
+        {
+            gid = layer->content.gids[(row * map->width) + col];
+            flip = gid & ~TMX_FLIP_BITS_REMOVAL;    // get flip operations from GID
+            gid = gid & TMX_FLIP_BITS_REMOVAL;      // remove flip operations from GID to get tile ID
+            tile = map->tiles[gid];
+            if (tile != NULL)
+            {
+                // Get tile's texture out of the tileset texture
+                if (tile->image != NULL)
+                {
+                    tsTexture = (Texture2D *)tile->image->resource_image;
+                    tile_width = tile->image->width;
+                    tile_height = tile->image->height;
+                }
+                else
+                {
+                    tsTexture = (Texture2D *)tile->tileset->image->resource_image;
+                    tile_width = tile->tileset->tile_width;
+                    tile_height = tile->tileset->tile_height;
+                }
+
+                sourceRect.x = tile->ul_x;
+                sourceRect.y = tile->ul_y;
+                sourceRect.width = destRect.width = tile_width;
+                sourceRect.height = destRect.height = tile_height;
+                destRect.x = col * tile_width;
+                destRect.y = row * tile_height;
+
+                // Deal with flips
+                origin.x = 0.0;
+                origin.y = 0.0;
+                rotation = 0.0;
+                switch(flip)
+                {
+                    case TMX_FLIPPED_DIAGONALLY:
+                    {
+                        sourceRect.height = -1 * sourceRect.height;
+                        rotation = 90.0;
+                    } break;
+                    case TMX_FLIPPED_VERTICALLY:
+                    {
+                        sourceRect.height = -1 * sourceRect.height;
+                    } break;
+                    case TMX_FLIPPED_DIAGONALLY + TMX_FLIPPED_VERTICALLY:
+                    {
+                        rotation = -90.0;
+                    } break;
+                    case TMX_FLIPPED_HORIZONTALLY:
+                    {
+                        sourceRect.width = -1 * sourceRect.width;
+                    } break;
+                    case  TMX_FLIPPED_DIAGONALLY + TMX_FLIPPED_HORIZONTALLY:
+                    {
+                        rotation = 90.0;
+                    } break;
+                    case TMX_FLIPPED_HORIZONTALLY + TMX_FLIPPED_VERTICALLY:
+                    {
+                        rotation = 180.0;
+                    } break;
+                    case TMX_FLIPPED_DIAGONALLY + TMX_FLIPPED_HORIZONTALLY + TMX_FLIPPED_VERTICALLY:
+                    {
+                        sourceRect.width = -1 * sourceRect.width;
+                        rotation = 90.0;
+                    } break;
+                    default:
+                    {
+                        origin.x = 0.0;
+                        origin.y = 0.0;
+                        rotation = 0.0;
+                    } break;
+                }
+
+                // Adjust origin to rotate around the center of the tile,
+                // which means destination recangle's origin must be adjusted.
+                if (rotation != 0.0)
+                {
+                    origin.x = tile_width / 2;
+                    origin.y = tile_height / 2;
+                    destRect.x += tile_width / 2;
+                    destRect.y += tile_height / 2;
+                }
+
+                // TODO: Take layer opacity into account
+                DrawTexturePro(*tsTexture, sourceRect, destRect, origin, rotation, WHITE);
+            }
+        }
+    }
+    
+}
+
+void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf)
+{
+    tmx_layer *layer = NULL;
+
+    // Setting these two function pointers allows TMX lib to load the tileset graphics and
+    // set each tile's resource_image property properly.
+    tmx_img_load_func = (void *(*)(const char *))LoadMapTexture;
+    tmx_img_free_func = (void (*)(void *))UnloadMapTexture;
+    tmx_map *mapTmx = tmx_load(mapFileName);
+    if (mapTmx == NULL) {
+        tmx_perror("tmx_load");
+        return;
+    }
+
+    // Create a frame buffer
+    // TODO: I don't life loading the RenderTexture here and unloading it in main(), but map info is needed to
+    // allocate the buffer of the right size, so either load it here, or separate tmx_load part of the code into
+    // a separate function to allow the application code to call LoadRenderTexture between tmx_load and actual
+    // drawing of the map.
+    *buf = LoadRenderTexture(mapTmx->width * mapTmx->tile_width, mapTmx->height * mapTmx->tile_height);
+
+    BeginTextureMode(*buf); // start rendering into the buffer
+        ClearBackground(SKYBLUE);
+        // Iterate through TMX layers rendering them into buf
+        layer = mapTmx->ly_head;
+        while(layer)
+        {
+            if (layer->visible)
+            {
+                switch(layer->type)
+                {
+                    case L_LAYER:
+                    {
+                        TraceLog(LOG_INFO, "Render TMX layer \"%s\"", layer->name);
+                        DrawTmxLayer(mapTmx, layer);
+                    } break;
+
+                    // Group, Object and Image layer types are not implemented in this example
+                    case L_GROUP:   // deliberate fall-through
+                    case L_OBJGR:
+                    case L_IMAGE:
+                        
+                    case L_NONE:
+                    default:
+                        break;
+                }
+            }
+            layer = layer->next;
+        }
+    EndTextureMode();   // stop rendering into the buffer
+
+    tmx_map_free(mapTmx);
 }
