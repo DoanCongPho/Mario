@@ -4,6 +4,7 @@
 # Ignore build and object directories
 /build/
 /obj/
+cmake-build-*/
 
 # Ignore compiled executable
 MarioGame
