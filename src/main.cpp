@@ -1,111 +1,314 @@
 /*******************************************************************************************
-*
-*   raylib [texture] example - Import and display of Tiled map editor map
-*
-*   This example has been created using raylib 2.0 (www.raylib.com)
-*   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
-*
-*   Copyright (c) 2017 Ramon Santamaria (@raysan5)
-*
-********************************************************************************************/
+ *
+ *   raylib [texture] example - Import and display of Tiled map editor map
+ *
+ *   This example has been created using raylib 2.0 (www.raylib.com)
+ *   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
+ *
+ *   Copyright (c) 2017 Ramon Santamaria (@raysan5)
+ *
+ ********************************************************************************************/
 #include <stdlib.h>
-
+#include <iostream>
 #include "raylib.h"
 #include "tmx.h"
+#include <vector>
+#define TILE_SIZE 32
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+#define PLAYER_SPEED 200.0f
+constexpr float GRAVITY = 1200.0f; // Pixels per second^2
+constexpr float JUMP_VELOCITY = 600.0f; // Pixels per second
 
 
-// Helper function for the TMX lib to load a texture from a file
+
+
+typedef struct Player {
+    Vector2 position;
+    Vector2 velocity;
+    bool onGround;
+    Vector2 spawnPoint;
+    Vector2 size;
+} Player;
+
+
+struct CollisionBox {
+    Rectangle rect;
+};
+
+// Function to load collision boxes from a TMX file
+std::vector<CollisionBox> LoadCollisionData(const char* tmxFile, const char* objectGroupName) {
+    std::vector<CollisionBox> collisionBoxes;
+    
+    tmx_map* map = tmx_load(tmxFile);
+    if (!map) {
+        std::cerr << "Failed to load TMX file: " << tmx_strerr() << std::endl;
+        return collisionBoxes;
+    }
+    
+    tmx_layer* layer = map->ly_head;
+    while (layer) {
+        if (layer->type == L_OBJGR && strcmp(layer->name, objectGroupName) == 0) {
+            tmx_object* obj = layer->content.objgr->head;
+            while (obj) {
+                float x = obj->x;
+                float y = obj->y;
+                float width = obj->width;
+                float height = obj->height;
+                
+                collisionBoxes.push_back({Rectangle{x, y, width, height}});
+                obj = obj->next;
+            }
+        }
+        layer = layer->next;
+    }
+    
+    // Free the map when done
+    tmx_map_free(map);
+    
+    return collisionBoxes;
+}
+
+
+
+bool IsTileCollidable(tmx_layer *layer, tmx_map *map, int x, int y);
+bool CheckCollisionWithMap(Player *player, tmx_map *map, tmx_layer *collisionLayer);
+
 Texture2D *LoadMapTexture(const char *fileName);
 
-// Helper function for the TMX lib to unload a texture that was previously loaded
 void UnloadMapTexture(Texture2D *tex);
 
-// Read a Tile map editor TMX map file and render the map into RenderTexture2D.
-// This is the main part of this example.
-// This must be called after InitWindow().
 void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf);
-
-// Frame buffer into which the map is rendered
 RenderTexture2D mapFrameBuffer;
+
+
+
+
+Rectangle GetPlayerCollisionBox(const Player& player) {
+    return Rectangle{player.position.x, player.position.y, player.size.x, player.size.y};
+}
+
 
 int main()
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
+    std::vector<CollisionBox> collisionBoxes = LoadCollisionData("Resources/Map1.tmx", "Terrain");
     int screenWidth = 800;
     int screenHeight = 640;
-    Vector2 player;     // This player doesn't have a box or a sprite. It's just a point.
+    
+    Player player = {
+        .position = {100.0f, 100.0f},
+        .velocity = {0.0f, 0.0f},
+        .onGround = false,
+        .spawnPoint = {100.0f, 100.0f}, // Where the player spawns
+        .size = {32.0f, 32.0f}
+    };
+    
     Camera2D camera;
-
     InitWindow(screenWidth, screenHeight, "raylib [core] example - 2d camera");
     
-    // Load Tiled TMX map and render it to the frame buffer
-    RenderTmxMapToFramebuf("Resources/untitled.tmx", &mapFrameBuffer);
+    RenderTmxMapToFramebuf("Resources/Map1.tmx", &mapFrameBuffer);
     
-    player.x = screenWidth / 2;
-    player.y = screenHeight / 2;
-    camera.target = (Vector2){ player.x, player.y };
-    camera.offset = (Vector2){ 0, 0 };
+    camera.target = (Vector2){ player.position.x, player.position.y };
+    camera.offset = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f };
     camera.rotation = 0.0;
     camera.zoom = 1.0;
     
     SetTargetFPS(60);
-    //--------------------------------------------------------------------------------------
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+    
+    
+    while (!WindowShouldClose())
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))
-        {
-            player.x += 4;              // Player movement
-            camera.offset.x -= 4;       // Camera displacement with player movement
+        const float delta = GetFrameTime();
+        
+        // Apply gravity
+        if (!player.onGround) {
+            player.velocity.y += GRAVITY * delta;
         }
-        else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))
-        {
-            player.x -= 4;              // Player movement
-            camera.offset.x += 4;       // Camera displacement with player movement
+        
+        // Handle horizontal movement
+        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+            player.velocity.x = 600.0f; // Move right
+        } else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
+            player.velocity.x = -600.0f; // Move left
+        } else {
+            player.velocity.x *= 0.8f;
+            if (fabs(player.velocity.x) < 0.1f) {
+                player.velocity.x = 0.0f;
+            }
         }
-        else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S))
-        {
-            player.y += 4;              // Player movement
-            camera.offset.y -= 4;       // Camera displacement with player movement
+        
+        // Handle jumping
+        if (IsKeyPressed(KEY_SPACE) && player.onGround) {
+            player.velocity.y = -JUMP_VELOCITY;
+            player.onGround = false;
         }
-        else if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W))
-        {
-            player.y -= 4;              // Player movement
-            camera.offset.y += 4;       // Camera displacement with player movement
+        
+        // Calculate next position
+        Vector2 nextPosition = {
+            player.position.x + player.velocity.x * delta,
+            player.position.y + player.velocity.y * delta
+        };
+        
+        // Handle collisions
+        Rectangle playerBox = {nextPosition.x, player.position.y, player.size.x, player.size.y};
+        bool collisionDetected = false;
+        bool groundCollisionDetected = false;
+        
+        // Check horizontal collisions
+        for (const auto& collider : collisionBoxes) {
+            if (CheckCollisionRecs(playerBox, collider.rect)) {
+                if (player.velocity.x > 0) {
+                    nextPosition.x = collider.rect.x - player.size.x;
+                    player.onGround = false;
+                    break;
+                } else if (player.velocity.x < 0) {
+                    nextPosition.x = collider.rect.x + collider.rect.width;
+                    
+                }
+                player.velocity.x = 0;
+                collisionDetected = true;
+            }
         }
-        // Camera target follows player
-        camera.target = (Vector2){ player.x, player.y };
-        //----------------------------------------------------------------------------------
-
-        // Draw
-        //----------------------------------------------------------------------------------
+     
+        // Update player position after horizontal collision check
+        player.position.x = nextPosition.x;
+        
+        // Check vertical collisions
+        playerBox = {player.position.x, nextPosition.y, player.size.x, player.size.y};
+        for (const auto& collider : collisionBoxes) {
+            if (CheckCollisionRecs(playerBox, collider.rect)) {
+                if (player.velocity.y > 0) {
+                    nextPosition.y = collider.rect.y - player.size.y;
+                    player.onGround = true;
+             
+                } else if (player.velocity.y < 0) {
+                    nextPosition.y = collider.rect.y + collider.rect.height;
+                }
+                player.velocity.y = 0;
+                collisionDetected = true;
+            }
+                groundCollisionDetected = true;
+        }
+        
+        if (!groundCollisionDetected) {
+            player.onGround = false;
+        }
+        
+        // Update player position after vertical collision check
+        player.position.y = nextPosition.y;
+        
+        // Update camera target
+        camera.target = (Vector2){
+            player.position.x + player.size.x / 2.0f,
+            player.position.y + player.size.y / 2.0f
+        };
+        
+        // Render
         BeginDrawing();
-            ClearBackground(RAYWHITE);
-
-            BeginMode2D(camera);
-                // Flip along the y axis because OpenGL origin is at bottom left corner while Raylib is top left
-                DrawTextureRec(
-                    mapFrameBuffer.texture,
-                               (Rectangle){0.0f, 0.0f, static_cast<float>(mapFrameBuffer.texture.width), static_cast<float>(-mapFrameBuffer.texture.height)},
-                    (Vector2){0.0, 0.0},
-                    WHITE);
-            EndMode2D();
+        ClearBackground(RAYWHITE);
+        BeginMode2D(camera);
+        DrawTextureRec(
+            mapFrameBuffer.texture,
+            (Rectangle){0.0f, 0.0f, static_cast<float>(mapFrameBuffer.texture.width), static_cast<float>(-mapFrameBuffer.texture.height)},
+            (Vector2){0.0, 0.0},
+            WHITE);
+        DrawRectangle(
+            player.position.x,
+            player.position.y,
+            player.size.x,
+            player.size.y,
+            BLUE);
+        for (const auto& collider : collisionBoxes) {
+            DrawRectangleLines(collider.rect.x, collider.rect.y, collider.rect.width, collider.rect.height, RED);
+        }
+        EndMode2D();
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
-
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
+    
+//    while (!WindowShouldClose())
+//    {
+//        const float delta = GetFrameTime();
+//        if (!player.onGround) {
+//            player.velocity.y += GRAVITY * GetFrameTime();
+//        }
+//        if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+//            player.velocity.x = 600.0f; // Move right
+//        }
+//        else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
+//            player.velocity.x = -600.0f; // Move left
+//        }
+//        else {
+//            player.velocity.x *= 0.8f;
+//            if (fabs(player.velocity.x) < 0.1f) {
+//                player.velocity.x = 0.0f;
+//            }
+//        }
+//
+//        if (IsKeyPressed(KEY_SPACE) && player.onGround) {
+//            player.velocity.y = -JUMP_VELOCITY;
+//            player.onGround = false;
+//        }
+//        Vector2 nextPosition = {
+//            player.position.x + player.velocity.x * GetFrameTime(),
+//            player.position.y + player.velocity.y * GetFrameTime()
+//        };
+//        Rectangle playerBox = {nextPosition.x, nextPosition.y, player.size.x, player.size.y};
+//
+//        bool collisionDetected = false;
+//        bool groundCollisionDetected = false;  // Mark ground collision
+//        for (const auto& collider : collisionBoxes) {
+//            if ((player.velocity.y) > 0 && CheckCollisionRecs(playerBox, collider.rect)) {
+//                // Player is falling and hits the ground
+//                player.velocity.y = 0; // Stop downward movement
+//                nextPosition.y = collider.rect.y - player.size.y; // Place the player above the ground
+//                player.onGround = true; // Set onGround to true
+//                groundCollisionDetected = true; // Mark ground collision
+//            }
+//            else if (player.velocity.y < 0 && CheckCollisionRecs(playerBox, collider.rect)) {
+//                // Player is jumping and hits a ceiling
+//                player.velocity.y = GRAVITY*GetFrameTime(); // Stop upward movement
+//                nextPosition.y = collider.rect.y + collider.rect.height; // Place the player below the ceiling
+//                collisionDetected = true; // Detect collision but not on the ground
+//            }
+//
+//        }
+//        if (!groundCollisionDetected) {
+//            player.onGround = false;
+//        }
+//        player.position = nextPosition;
+//
+//        camera.target = (Vector2){
+//            player.position.x + player.size.x / 2.0f,
+//            player.position.y + player.size.y / 2.0f
+//        };
+//
+//        BeginDrawing();
+//        ClearBackground(RAYWHITE);
+//        BeginMode2D(camera);
+//        DrawTextureRec(
+//                       mapFrameBuffer.texture,
+//                       (Rectangle){0.0f, 0.0f, static_cast<float>(mapFrameBuffer.texture.width), static_cast<float>(-mapFrameBuffer.texture.height)},
+//                       (Vector2){0.0, 0.0},
+//                       WHITE);
+//        DrawRectangle(
+//                      player.position.x,
+//                      player.position.y,
+//                      player.size.x,
+//                      player.size.y,
+//                      BLUE);
+//        for (const auto& collider : collisionBoxes) {
+//            DrawRectangleLines(collider.rect.x, collider.rect.y, collider.rect.width, collider.rect.height, RED);
+//        }
+//        EndMode2D();
+//        EndDrawing();
+//    }
     UnloadRenderTexture(mapFrameBuffer);
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
-
+    CloseWindow();
     return 0;
 }
+
+
+
 
 Texture2D *LoadMapTexture(const char *fileName)
 {
@@ -118,7 +321,6 @@ Texture2D *LoadMapTexture(const char *fileName)
     }
     return NULL;
 }
-
 void UnloadMapTexture(Texture2D *tex)
 {
     if (tex != NULL)
@@ -127,7 +329,6 @@ void UnloadMapTexture(Texture2D *tex)
         free(tex);
     }
 }
-
 void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
 {
     unsigned long row, col;
@@ -141,7 +342,7 @@ void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
     Texture2D *tsTexture; // tileset texture
     float rotation = 0.0;
     Vector2 origin = {0.0, 0.0};
-
+    
     for (row = 0; row < map->height; row++)
     {
         for (col = 0; col < map->width; col++)
@@ -152,7 +353,7 @@ void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
             tile = map->tiles[gid];
             if (tile != NULL)
             {
-                // Get tile's texture out of the tileset texture
+
                 if (tile->image != NULL)
                 {
                     tsTexture = (Texture2D *)tile->image->resource_image;
@@ -165,14 +366,13 @@ void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
                     tile_width = tile->tileset->tile_width;
                     tile_height = tile->tileset->tile_height;
                 }
-
+                
                 sourceRect.x = tile->ul_x;
                 sourceRect.y = tile->ul_y;
                 sourceRect.width = destRect.width = tile_width;
                 sourceRect.height = destRect.height = tile_height;
                 destRect.x = col * tile_width;
                 destRect.y = row * tile_height;
-
                 // Deal with flips
                 origin.x = 0.0;
                 origin.y = 0.0;
@@ -216,9 +416,6 @@ void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
                         rotation = 0.0;
                     } break;
                 }
-
-                // Adjust origin to rotate around the center of the tile,
-                // which means destination recangle's origin must be adjusted.
                 if (rotation != 0.0)
                 {
                     origin.x = tile_width / 2;
@@ -226,21 +423,14 @@ void DrawTmxLayer(tmx_map *map, tmx_layer *layer)
                     destRect.x += tile_width / 2;
                     destRect.y += tile_height / 2;
                 }
-
-                // TODO: Take layer opacity into account
                 DrawTexturePro(*tsTexture, sourceRect, destRect, origin, rotation, WHITE);
             }
         }
     }
-    
 }
-
 void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf)
 {
     tmx_layer *layer = NULL;
-
-    // Setting these two function pointers allows TMX lib to load the tileset graphics and
-    // set each tile's resource_image property properly.
     tmx_img_load_func = (void *(*)(const char *))LoadMapTexture;
     tmx_img_free_func = (void (*)(void *))UnloadMapTexture;
     tmx_map *mapTmx = tmx_load(mapFileName);
@@ -248,43 +438,37 @@ void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf)
         tmx_perror("tmx_load");
         return;
     }
-
-    // Create a frame buffer
-    // TODO: I don't life loading the RenderTexture here and unloading it in main(), but map info is needed to
-    // allocate the buffer of the right size, so either load it here, or separate tmx_load part of the code into
-    // a separate function to allow the application code to call LoadRenderTexture between tmx_load and actual
-    // drawing of the map.
     *buf = LoadRenderTexture(mapTmx->width * mapTmx->tile_width, mapTmx->height * mapTmx->tile_height);
+   
+    
+    BeginTextureMode(*buf);
+    ClearBackground(SKYBLUE);
 
-    BeginTextureMode(*buf); // start rendering into the buffer
-        ClearBackground(SKYBLUE);
-        // Iterate through TMX layers rendering them into buf
-        layer = mapTmx->ly_head;
-        while(layer)
+    layer = mapTmx->ly_head;
+    while(layer)
+    {
+        if (layer->visible)
         {
-            if (layer->visible)
+            switch(layer->type)
             {
-                switch(layer->type)
+                case L_LAYER:
                 {
-                    case L_LAYER:
-                    {
-                        TraceLog(LOG_INFO, "Render TMX layer \"%s\"", layer->name);
-                        DrawTmxLayer(mapTmx, layer);
-                    } break;
-
-                    // Group, Object and Image layer types are not implemented in this example
-                    case L_GROUP:   // deliberate fall-through
-                    case L_OBJGR:
-                    case L_IMAGE:
-                        
-                    case L_NONE:
-                    default:
-                        break;
-                }
+                    TraceLog(LOG_INFO, "Render TMX layer \"%s\"", layer->name);
+                    DrawTmxLayer(mapTmx, layer);
+                } break;
+                case L_GROUP:
+                case L_OBJGR:
+                case L_IMAGE:
+                    
+                case L_NONE:
+                default:
+                    break;
             }
-            layer = layer->next;
         }
-    EndTextureMode();   // stop rendering into the buffer
-
+        layer = layer->next;
+    }
+    EndTextureMode();
+    
     tmx_map_free(mapTmx);
 }
+
