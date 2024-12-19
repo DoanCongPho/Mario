@@ -266,3 +266,13 @@ void DrawTmxImageLayer(tmx_layer *layer, Vector2 mapDim)
         }
     }
 }
+
+void loadAllAnimations() {
+    ResourcesManager::getInstance().LoadAnimationTextures(smallMarioRun, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(smallMarioJump, 1);
+    ResourcesManager::getInstance().LoadAnimationTextures(transToSuper, 3);
+    ResourcesManager::getInstance().LoadAnimationTextures(smallMario, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(superMarioRun, 3);
+    ResourcesManager::getInstance().LoadAnimationTextures(superMarioJump, 1);
+    ResourcesManager::getInstance().LoadAnimationTextures(superMario, 3);
+}
