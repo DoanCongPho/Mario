@@ -77,7 +77,9 @@ int main()
     vector<Texture2D> runningTex = ResourcesManager::getInstance().getA("smallMarioRun");
     vector<Texture2D> walkingTex = ResourcesManager::getInstance().getA("smallMario");
     vector<Texture2D> jumpingTex = ResourcesManager::getInstance().getA("smallMarioJump");
-    std::vector<CollisionBox> collisionBoxes = LoadCollisionData("Resources/Map1.tmx", "Collison");
+    
+    
+    std::vector<CollisionBox> collisionBoxes = LoadCollisionData("Resources/Map2.tmx", "Collision");
     
     Player player = {
         .position = {100.0f, 100.0f},
@@ -97,7 +99,7 @@ int main()
     Camera2D camera;
     
     
-    RenderTmxMapToFramebuf("Resources/Map1.tmx", &mapFrameBuffer);
+    RenderTmxMapToFramebuf("Resources/Map2.tmx", &mapFrameBuffer);
     camera.target = (Vector2){ player.position.x, player.position.y };
     camera.offset = (Vector2){ screenWidth / 2.0f, screenHeight / 2.0f };
     camera.rotation = 0.0;
@@ -232,7 +234,7 @@ int main()
         }else if(playerState == STANDING){
             currentTexture = walkingTex[0];
         }else
-            currentTexture  = jumpingTex[player.currentFrame];
+            currentTexture  = jumpingTex[0];
         Rectangle sourceRect = {
             0.0f, 0.0f,
             (float)(player.faceRight ? currentTexture.width : -currentTexture.width),
