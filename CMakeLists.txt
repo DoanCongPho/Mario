@@ -12,10 +12,16 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/Menu.h
         src/Button.cpp
         src/Button.h
-        src/Text.cpp
-        src/Text.h
-        src/GameWindow.cpp
-        src/GameWindow.h)
+        src/Game.h
+        src/Game.cpp
+        src/IDrawable.h
+        src/TextureBackground.cpp
+        src/TextureBackground.h
+        src/UIText.cpp
+        src/UIText.h
+        src/UIFrame.cpp
+        src/UIFrame.h
+)
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib tmx)
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
