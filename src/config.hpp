@@ -10,12 +10,12 @@
 
 #include <iostream>
 using namespace std;
-const pair<string,string>  smallMarioRun = {"smallMarioRun", "resources/SmallMarioRunning_"} ;
-const pair<string,string>  smallMarioJump = {"smallMarioJump", "resources/SmallMarioJumping_"};
-const pair<string,string>  transToSuper = {"transToSuper", "resources/TransitioningMario_"};
-const pair<string,string>  smallMario= {"smallMario", "resources/SmallMario_"};
-const pair<string,string>  superMarioRun = {"superMarioRun", "resources/SuperMarioRunning_"} ;
-const pair<string,string>  superMarioJump = {"superMarioJump", "resources/SuperMarioJumping_"};
-const pair<string,string>  superMario= {"superMario", "resources/SuperMario_"};
+const pair<string,string>  smallMarioRun = {"smallMarioRun", "Resources/images/sprites/mario/SmallMarioRunning_"} ;
+const pair<string,string>  smallMarioJump = {"smallMarioJump", "Resources/images/sprites/mario/SmallMarioJumping_"};
+const pair<string,string>  transToSuper = {"transToSuper", "Resources/images/sprites/mario/TransitioningMario_"};
+const pair<string,string>  smallMario= {"smallMario", "Resources/images/sprites/mario/SmallMario_"};
+const pair<string,string>  superMarioRun = {"superMarioRun", "Resources/images/sprites/mario/SuperMarioRunning_"} ;
+const pair<string,string>  superMarioJump = {"superMarioJump", "Resources/images/sprites/mario/SuperMarioJumping_"};
+const pair<string,string>  superMario= {"superMario", "Resources/images/sprites/mario/SuperMario_"};
 
 #endif /* config_hpp */
