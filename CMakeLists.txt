@@ -8,8 +8,6 @@ CPMAddPackage("gh:raysan5/raylib#5.5")
 CPMAddPackage("gh:baylej/tmx#tmx_1.10.0")
 
 add_executable(${PROJECT_NAME} src/main.cpp
-        src/Menu.cpp
-        src/Menu.h
         src/Button.cpp
         src/Button.h
         src/Game.h
