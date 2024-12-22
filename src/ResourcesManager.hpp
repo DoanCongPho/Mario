@@ -45,12 +45,6 @@ public:
     
 };
 
-void UnloadMapTexture(Texture2D *tex);
-void DrawTmxImageLayer(tmx_layer *layer, Vector2 mapDim);
-void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf);
-void DrawTmxLayer(tmx_map *map, tmx_layer *layer);
-Texture2D *LoadMapTexture(const char *fileName);
-void loadAllAnimations(); 
 #endif
 
 

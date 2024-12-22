@@ -28,4 +28,4 @@ public:
     
 };
 
-#endif /* Sprite_hpp */
+#endif 
