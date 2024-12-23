@@ -8,9 +8,8 @@
 #include "Player.hpp"
 #include <vector>
 #define TILE_SIZE 32
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-
+#define SCREEN_WIDTH 1200
+#define SCREEN_HEIGHT 800
 
 
 
@@ -19,9 +18,15 @@ int main() {
     loadAllAnimations();
     vector<Texture2D> walkingTextures = ResourcesManager::getInstance().getA("smallMario");
     vector<Texture2D> jumpingTextures = ResourcesManager::getInstance() .getA("smallMarioJump");
-    Player player({100.0f, 100.0f}, walkingTextures, jumpingTextures);
-    Map map("Resources/Map2.tmx", "Collision");
+    vector<Texture2D> runningTextures= ResourcesManager::getInstance().getA("smallMarioRun");
+    vector<Texture2D> tranfomationTextures = ResourcesManager::getInstance().getA("transToSuper");
+    vector<Texture2D> superMarioWalk = ResourcesManager::getInstance().getA("superMario");
+    vector<Texture2D> superMarioRun = ResourcesManager::getInstance().getA("superMarioRun");
+    vector<Texture2D> superMarioJump =ResourcesManager::getInstance().getA("superMarioJump");
     
+    Player player({100.0f, 100.0f}, walkingTextures, jumpingTextures,runningTextures, tranfomationTextures);
+    Map map1("Resources/Map1.tmx", "Collision");
+    Map map2("Resources/Map2.tmx", "Collision");
     Camera2D camera;
     camera.target = {
         player.position.x + player.size.x / 2.0f,
@@ -33,13 +38,17 @@ int main() {
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         float delta = GetFrameTime();
-        player.Update(delta, map.GetCollisionBoxes());
+        std::cout <<delta << endl;
+        if(IsKeyDown(KEY_T)){
+            player.StartTransformation(superMarioWalk, superMarioJump, superMarioRun); 
+        }
+        player.Update(delta, map2.GetCollisionBoxes());
         camera.target = {player.position.x + player.size.x / 2.0f, player.position.y + player.size.y / 2.0f};
-       
+        
         BeginDrawing();
         ClearBackground(RAYWHITE);
         BeginMode2D(camera);
-        map.Render();
+        map2.Render();
         player.Draw();
         EndMode2D();
         EndDrawing();

@@ -198,7 +198,7 @@ void RenderTmxMapToFramebuf(const char *mapFileName, RenderTexture2D *buf)
                 case L_OBJGR:
                 case L_IMAGE:
                     TraceLog(LOG_INFO, "Render TMX image layer \"%s\"", layer->name);
-                    DrawTmxImageLayer(layer, (Vector2){static_cast<float>(mapTmx->width*32), static_cast<float>(mapTmx->height*32)});
+                    DrawTmxImageLayer(layer, (Vector2){static_cast<float>(mapTmx->width*40), static_cast<float>(mapTmx->height*50)});
                     break;
                 case L_NONE:
                 default:
