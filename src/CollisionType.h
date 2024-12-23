@@ -1,0 +1,19 @@
+//
+// Created by Administrator on 12/23/2024.
+//
+
+#ifndef COLLISIONTYPE_H
+#define COLLISIONTYPE_H
+
+enum CollisionType {
+  COLLISION_TYPE_NONE = 0,
+
+  COLLISION_TYPE_NORTH,
+  COLLISION_TYPE_EAST,
+  COLLISION_TYPE_WEST,
+  COLLISION_TYPE_SOUTH,
+
+  COLLISION_TYPE_FIREBALL,
+};
+
+#endif // COLLISIONTYPE_H
