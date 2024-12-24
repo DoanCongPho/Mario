@@ -23,8 +23,9 @@ int main() {
     vector<Texture2D> superMarioWalk = ResourcesManager::getInstance().getA("superMario");
     vector<Texture2D> superMarioRun = ResourcesManager::getInstance().getA("superMarioRun");
     vector<Texture2D> superMarioJump =ResourcesManager::getInstance().getA("superMarioJump");
+    vector<Texture2D> fireballs = ResourcesManager::getInstance().getA("fireballs");
     
-    Player player({100.0f, 100.0f}, walkingTextures, jumpingTextures,runningTextures, tranfomationTextures);
+    Player player({100.0f, 100.0f}, walkingTextures, jumpingTextures,runningTextures, tranfomationTextures, fireballs);
     Map map1("Resources/Map1.tmx", "Collision");
     Map map2("Resources/Map2.tmx", "Collision");
     Camera2D camera;
@@ -38,9 +39,14 @@ int main() {
     SetTargetFPS(60);
     while (!WindowShouldClose()) {
         float delta = GetFrameTime();
-        std::cout <<delta << endl;
-        if(IsKeyDown(KEY_T)){
-            player.StartTransformation(superMarioWalk, superMarioJump, superMarioRun); 
+        if(IsKeyPressed(KEY_T)){
+            player.StartTransformation(superMarioWalk, superMarioJump, superMarioRun);
+        }
+        if(IsKeyPressed(KEY_R)){
+            if(player.fireballsActive == false)
+                player.ActivateFireballs();
+            else
+                player.DeactivateFireballs();
         }
         player.Update(delta, map2.GetCollisionBoxes());
         camera.target = {player.position.x + player.size.x / 2.0f, player.position.y + player.size.y / 2.0f};

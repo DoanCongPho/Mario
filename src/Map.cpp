@@ -244,6 +244,7 @@ void loadAllAnimations() {
     ResourcesManager::getInstance().LoadAnimationTextures(superMarioRun, 3);
     ResourcesManager::getInstance().LoadAnimationTextures(superMarioJump, 1);
     ResourcesManager::getInstance().LoadAnimationTextures(superMario, 3);
+    ResourcesManager::getInstance().LoadAnimationTextures(fireballs, 4);
 }
 Rectangle GetPlayerCollisionBox(const Player& player) {
     return Rectangle{player.position.x, player.position.y, player.size.x, player.size.y};

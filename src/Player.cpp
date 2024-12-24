@@ -7,12 +7,16 @@ constexpr float ACCELERATION = 600.0f; // Acceleration value
 constexpr float MAX_VELOCITY = 300.0f; // Max walking velocity
 constexpr float RUNNING_VELOCITY = 500.0f;
 constexpr float TRANSFORMATION_FRAME_TIME = 0.3f;
-Player::Player(const Vector2& spawnPoint,  std::vector<Texture2D>& walkingTextures, std::vector<Texture2D>& jumpingTextures, std::vector<Texture2D>& runningTextures,  std::vector<Texture2D>& transformationTextures)
+Player::Player(const Vector2& spawnPoint, std::vector<Texture2D>& walkingTextures, std::vector<Texture2D>& jumpingTextures,  std::vector<Texture2D>&runningTextures,
+               std::vector<Texture2D>& transformationTextures,
+               std::vector<Texture2D>& fireballsTexture)
 : spawnPoint(spawnPoint),
 walkingTextures(walkingTextures),
 jumpingTextures(jumpingTextures),
 runningTextures(runningTextures),
 transformationTextures(transformationTextures),
+fireballsTextures(fireballsTexture),
+fireballsActive(false),
 position(spawnPoint),
 velocity({0, 0}),
 acceleration({0, 0}), // Initialize acceleration
@@ -22,12 +26,64 @@ currentFrame(0),
 frameTime(0.2f),
 frameCounter(0.0f),
 faceRight(true),
-state(STANDING) {}
+state(STANDING)
+{}
+void Player::ActivateFireballs() {
+    fireballsActive = true;
+    
+}
+
+void Player::DeactivateFireballs() {
+    fireballsActive = false;
+}
+
+void Player::HandleFireballs(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) {
+    if (fireballsActive) {
+        // Create a new fireball when the F key is pressed
+        if (IsKeyPressed(KEY_F)) {
+            Vector2 fireballVelocity = {faceRight ? 500.0f : -500.0f, 0.0f};
+            Vector2 fireballPosition = {position.x + (faceRight ? size.x : -20.0f), position.y + size.y / 2};
+            activeFireballs.emplace_back(fireballPosition, fireballVelocity, fireballsTextures);
+        }
+        
+        // Update and remove expired or off-screen fireballs
+    }
+    for (auto it = activeFireballs.begin(); it != activeFireballs.end();) {
+        
+        bool collided = false;
+        // Check for collisions with each collision box
+        for (const auto& box : collisionBoxes) {
+            if (CheckCollisionRecs(it->GetBoundingBox(), box.rect)) {
+                // Handle the collision logic here, e.g., fireball gets destroyed on collision
+                collided = true;
+                break;
+            }
+        }
+        
+        it->Update(deltaTime);
+        if (collided || it->HasExpired()) {
+            it = activeFireballs.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void Player::DrawFireballs() const {
+    for (const auto& fireball : activeFireballs) {
+        fireball.Draw();
+    }
+}
+
+
 
 void Player::Update(float delta, const std::vector<CollisionBox>& collisionBoxes) {
-    if(!(state == TRANSFORMING))
+    if(!(state == TRANSFORMING)){
         HandleMovement(delta);
-    HandleCollisions(delta, collisionBoxes);
+        HandleFireballs(delta, collisionBoxes);
+        HandleCollisions(delta, collisionBoxes);
+    }
+    
     UpdateFrame(delta);
 }
 void Player::StartTransformation( std::vector<Texture2D>& newWalkingTextures,  std::vector<Texture2D>& newJumpingTextures,  std::vector<Texture2D>& newRunningTextures) {
@@ -48,7 +104,7 @@ void Player::StartTransformation( std::vector<Texture2D>& newWalkingTextures,  s
     }
     Vector2 preSize = size;
     size = {(float)transformationTextures[currentFrame].width, (float)transformationTextures[currentFrame].height};
-    position.y += (size.y - preSize.y)/2.0f;
+    position.y -= fabs(size.y - preSize.y);
 }
 void Player::HandleMovement(float delta) {
     acceleration = {0.0f, 0.0f}; // Reset acceleration each frame
@@ -148,7 +204,7 @@ void Player::UpdateFrame(float delta) {
                 size = {(float)runningTextures[0].width, (float)runningTextures[0].height};
                 state = STANDING;
             }
-           
+            
         }
     }
     // Handle other states (walking, jumping, running)
@@ -186,7 +242,11 @@ void Player::Draw() const {
         (float)(faceRight ? currentTexture.width : -currentTexture.width),
         (float)currentTexture.height
     };
-    DrawTextureRec(currentTexture, sourceRect, position, WHITE);
+    Color c = WHITE;
+    if(fireballsActive)
+        c = ORANGE;
+    DrawTextureRec(currentTexture, sourceRect, position, c);
+    DrawFireballs();
 }
 
 Player::State Player::GetState() const {

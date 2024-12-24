@@ -17,5 +17,5 @@ const pair<string,string>  smallMario= {"smallMario", "Resources/images/sprites/
 const pair<string,string>  superMarioRun = {"superMarioRun", "Resources/images/sprites/mario/SuperMarioRunning_"} ;
 const pair<string,string>  superMarioJump = {"superMarioJump", "Resources/images/sprites/mario/SuperMarioJumping_"};
 const pair<string,string>  superMario= {"superMario", "Resources/images/sprites/mario/SuperMario_"};
-
+const pair<string,string>  fireballs= {"fireballs", "Resources/images/sprites/mario/FlowerMarioFireball_"};
 #endif /* config_hpp */
