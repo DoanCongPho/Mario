@@ -23,6 +23,10 @@ public:
   ~CollisionProbe() = default;
 
   bool collided(Rectangle &other) const;
+  void draw() const;
+
+  [[nodiscard]] float getWidth() const { return rect.width; }
+  [[nodiscard]] float getHeight() const { return rect.height; }
 
   void setPosition(const Vector2 position) {
     this->rect.x = position.x;

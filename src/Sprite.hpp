@@ -50,7 +50,9 @@ public:
   void setVel(float vx, float vy);
 
   Rectangle getRect() const;
-  CollisionType checkCollision(Sprite *sprite);
+
+  CollisionType checkCollision(const Sprite *sprite) const;
+  virtual void updateCollisionProbes();
 };
 
 #endif

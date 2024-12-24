@@ -4,6 +4,7 @@
 
 #ifndef BANZAIBILL_H
 #define BANZAIBILL_H
+
 #include "Baddie.h"
 
 class BanzaiBill : public Baddie {
@@ -12,8 +13,7 @@ public:
              Color color);
   ~BanzaiBill() override = default;
 
-  void updatePosition(float deltaTime) override;
-  void draw() const override;
+  void onDying() override;
 };
 
 #endif // BANZAIBILL_H

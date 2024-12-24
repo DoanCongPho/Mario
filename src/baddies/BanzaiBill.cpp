@@ -11,30 +11,13 @@ BanzaiBill::BanzaiBill(Vector2 position, Vector2 dimensions, Vector2 velocity,
   pos = position;
   dim = dimensions;
   vel = velocity;
+  affectedByGravity = false;
+  maxFrames = 1;
+  textureNameTemplate = "BanzaiBill_%d";
 }
 
-void BanzaiBill::updatePosition(const float deltaTime) {
-  Baddie::updatePosition(deltaTime);
+void BanzaiBill::onDying() {
+  affectedByGravity = true;
 
-  if (state == SPRITE_STATE_DYING) {
-    vel.y += GRAVITY;
-  }
-}
-
-void BanzaiBill::draw() const {
-  auto textures = ResourcesManager::getInstance().GetTextures();
-  auto texture = textures["BanzaiBill_0"];
-  auto needsFlipping = !isFacingRight;
-
-  DrawTexturePro(texture, Rectangle(0, 0, dim.x, dim.y),
-                 Rectangle(pos.x + dim.x / 2, pos.y + dim.y / 2,
-                           dim.x * (needsFlipping ? -1.0 : 1.0), dim.y),
-                 Vector2(dim.x / 2, dim.y / 2), angle, WHITE);
-
-  if (state == SPRITE_STATE_DYING) {
-    auto puftName = TextFormat("Puft_%d", currentDyingFrame);
-    auto puftTexture = textures[puftName];
-
-    DrawTexture(puftTexture, posOnDying.x, posOnDying.y, WHITE);
-  }
+  Baddie::onDying();
 }

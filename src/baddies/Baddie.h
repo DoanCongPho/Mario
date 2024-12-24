@@ -10,13 +10,15 @@
 
 class Baddie : public Sprite {
 protected:
-  float dyingFrameAcum;
-  float dyingFrameTime;
-  int maxDyingFrames;
-  int currentDyingFrame;
-  float pointsFrameAcum;
-  float pointsFrameTime;
-  Vector2 posOnDying;
+  std::string textureNameTemplate = "Unknown_%d";
+  bool affectedByGravity = true;
+  float dyingFrameAcum = 0;
+  float dyingFrameTime = 0.1;
+  int maxDyingFrames = 4;
+  int currentDyingFrame = 0;
+  float pointsFrameAcum = 0;
+  float pointsFrameTime = 1;
+  Vector2 posOnDying = Vector2(0, 0);
 
 public:
   Baddie();
@@ -25,7 +27,7 @@ public:
   void update(float deltaTime) override;
   virtual void updatePosition(float deltaTime);
 
-  void draw() const override = 0;
+  void draw() const override;
   void activateWithPlayerProximity(Player &player);
 
   virtual void onHit();

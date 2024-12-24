@@ -39,9 +39,34 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/CollisionType.h
         src/CollisionProbe.cpp
         src/CollisionProbe.h
+        src/baddies/BlueKoopaTroopa.cpp
+        src/baddies/BlueKoopaTroopa.h
+        src/baddies/BobOmb.cpp
+        src/baddies/BobOmb.h
+        src/baddies/BuzzyBeetle.cpp
+        src/baddies/BuzzyBeetle.h
+        src/baddies/BulletBill.cpp
+        src/baddies/BulletBill.h
+        src/baddies/Rex.cpp
+        src/baddies/Rex.h
+        src/baddies/FlyingGoomba.cpp
+        src/baddies/FlyingGoomba.h
+        src/baddies/Goomba.cpp
+        src/baddies/Goomba.h
+        src/baddies/GreenKoopaTroopa.cpp
+        src/baddies/GreenKoopaTroopa.h
+        src/baddies/JumpingPiranhaPlant.cpp
+        src/baddies/JumpingPiranhaPlant.h
+        src/baddies/MontyMole.cpp
+        src/baddies/MontyMole.h
+        src/baddies/MummyBeetle.cpp
+        src/baddies/MummyBeetle.h
+        src/baddies/Muncher.cpp
+        src/baddies/Muncher.h
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib tmx)
+target_compile_definitions(${PROJECT_NAME} PRIVATE $<$<CONFIG:Debug>:DEBUG>)
 add_custom_command(
-    TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_CURRENT_BINARY_DIR}/Resources
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/Resources ${CMAKE_CURRENT_BINARY_DIR}/Resources
 )
