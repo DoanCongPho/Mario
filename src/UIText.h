@@ -14,13 +14,20 @@ private:
     float scaleX;
     float scaleY;
     bool isHovered;
+    bool canPress;
+    bool isClicked;
     Rectangle bounds;
+    Color textColor = WHITE;
+
 public:
-    UIText(const std::string& text, Vector2 position, int fontSize);
+    UIText(std::string  text, Vector2 position, int fontSize,bool canPress = true);
     void draw() override;
     void setScale(float scaleX, float scaleY);
     bool isMouseOver();
     void setHover(bool isHovered);
+    bool isClickedOn();
+    void setClicked(bool isClicked);
+    std::string getText();
 };
 
 #endif

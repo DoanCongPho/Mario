@@ -1,4 +1,7 @@
 #include "UIFrame.h"
+
+#include <iostream>
+
 #include "UIText.h"
 
 UIFrame::UIFrame(const char* backgroundPath) : background(new TextureBackground(backgroundPath))
@@ -23,18 +26,17 @@ void UIFrame::addElement(IDrawable* element)
 }
 void UIFrame::draw()
 {
-    float scaleX = (float)GetScreenWidth() / (float)background->originalWidth;
-    float scaleY = (float)GetScreenHeight() / (float)background->originalHeight;
+    const float scaleX = static_cast<float>(GetScreenWidth()) / static_cast<float>(background->originalWidth);
+    const float scaleY = static_cast<float>(GetScreenHeight()) / static_cast<float>(background->originalHeight);
 
     for (auto element : elements)
     {
-        UIText* uiText = dynamic_cast<UIText*>(element);
-        if(uiText != nullptr)
+        if(auto* uiText = dynamic_cast<UIText*>(element); uiText != nullptr)
         {
             uiText->setScale(scaleX, scaleY);
         }
     }
-    updateHoverStatus();
+
     background->draw();
     for (auto element : elements)
     {
@@ -60,10 +62,10 @@ void UIFrame::clearElements()
 
 void UIFrame::updateHoverStatus()
 {
+
     for(auto element : elements)
     {
-        UIText* uiText = dynamic_cast<UIText*>(element);
-        if(uiText != nullptr)
+        if(auto* uiText = dynamic_cast<UIText*>(element); uiText != nullptr)
         {
             uiText->setHover(uiText->isMouseOver());
         }

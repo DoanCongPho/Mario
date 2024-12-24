@@ -21,7 +21,6 @@ public:
     TextureBackground* getBackground();
     void changeBackground(const char* backgroundPath);
     void clearElements();
-
     void updateHoverStatus();
 };
 
