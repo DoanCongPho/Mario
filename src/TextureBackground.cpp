@@ -1,5 +1,8 @@
 #include "TextureBackground.h"
 
+#include <string>
+
+
 TextureBackground::TextureBackground(const char* path)
 {
     texture = LoadTexture(path);
@@ -8,6 +11,7 @@ TextureBackground::TextureBackground(const char* path)
     }
     originalWidth = texture.width;
     originalHeight = texture.height;
+    texturePath = path;
 }
 
 TextureBackground::~TextureBackground()
@@ -36,3 +40,8 @@ void TextureBackground::changeTexture(const char* path)
     originalWidth = texture.width;
     originalHeight = texture.height;
 }
+std::string TextureBackground::getTexturePath()
+{
+    return texturePath;
+}
+

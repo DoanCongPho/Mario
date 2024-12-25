@@ -47,6 +47,12 @@ TextureBackground* UIFrame::getBackground()
 {
     return background;
 }
+TextureBackground* UIFrame::getBackgroundByPath(const std::string& path)
+{
+    if (background != nullptr && background->getTexturePath() == path) return background;
+    return nullptr;
+}
+
 void UIFrame::changeBackground(const char* backgroundPath)
 {
     background->changeTexture(backgroundPath);
@@ -67,7 +73,17 @@ void UIFrame::updateHoverStatus()
     {
         if(auto* uiText = dynamic_cast<UIText*>(element); uiText != nullptr)
         {
-            uiText->setHover(uiText->isMouseOver());
+            uiText->setHover(uiText->isMouseOver() && uiText->isClickedOn());
         }
     }
+}
+
+IDrawable* UIFrame::getElementByName(const std::string& name)
+{
+    for (auto element : elements)
+        if(auto* uiText = dynamic_cast<UIText*>(element); uiText != nullptr)
+        {
+            if (uiText->getText() == name) return element;
+        }
+    return nullptr;
 }

@@ -7,7 +7,7 @@
 class Game {
 private:
     UIFrame frame;
-    bool changeBackground = false;
+    bool changeBackground = true;
 public:
     Game();
     ~Game();
@@ -15,6 +15,7 @@ public:
     void Run();
     void HandleInput();
     void DrawScene();
+    void AddMainMenuElements();
 };
 
 #endif
