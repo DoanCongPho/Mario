@@ -1,6 +1,6 @@
 
 #include "Map.hpp"
-
+#include <cstring>
 
 
 Map::Map(const char* mapFile, const char* objectGroupName) {

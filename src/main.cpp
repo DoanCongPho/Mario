@@ -1,5 +1,4 @@
 
-/*
 #include <stdlib.h>
 #include <iostream>
 #include "raylib.h"
@@ -63,7 +62,6 @@ int main() {
     CloseWindow();
     return 0;
 }
-*/
 
 /*#include "raylib.h"
 #include "Game.h"
@@ -76,91 +74,5 @@ int main()
     return 0;
 }*/
 
-#include "raylib.h"
-
-#include <iostream>
-#include <string>
-#include <vector>
-
-// Cấu trúc để biểu diễn một nút text
-struct TextButton {
-    Rectangle bounds;  // Vị trí và kích thước nút
-    std::string text;  // Nội dung text
-    Color textColor;   // Màu chữ mặc định
-    Color hoverColor;  // Màu chữ khi hover
-    Color backgroundColor; // Màu nền
-    bool isHovering;   // Kiểm tra hover
-};
-
-void DrawTextButton(const TextButton& button) {
-
-    // Vẽ nền
-    DrawRectangleRec(button.bounds, button.backgroundColor);
-
-    // Chọn màu text
-    Color color = button.isHovering ? button.hoverColor : button.textColor;
-
-    // Vẽ text căn giữa
-    int textWidth = MeasureText(button.text.c_str(), 20);
-    int x = button.bounds.x + (button.bounds.width - textWidth) / 2;
-    int y = button.bounds.y + (button.bounds.height - 20) / 2;
-    DrawText(button.text.c_str(), x, y, 20, color);
-}
-
-// Hàm kiểm tra xem chuột có nằm trong nút không
-bool IsMouseInButton(const TextButton& button) {
-    return CheckCollisionPointRec(GetMousePosition(), button.bounds);
-}
-
-// Hàm so sánh hai màu
-bool ColorEquals(Color c1, Color c2) {
-    return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b && c1.a == c2.a;
-}
 
 
-int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
-
-    InitWindow(screenWidth, screenHeight, "Multiple Text Buttons");
-
-    // Tạo danh sách các nút text
-    std::vector<TextButton> buttons = {
-       {{100, 100, 200, 50}, "Button 1", BLACK, BLUE, LIGHTGRAY, false},
-       {{100, 200, 200, 50}, "Button 2", BLACK, GREEN, LIGHTGRAY, false},
-       {{100, 300, 200, 50}, "Button 3", BLACK, RED,   LIGHTGRAY, false},
-    };
-
-    Color backgroundColor = WHITE;
-
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose()) {
-
-        // Xử lý hover và click cho từng nút
-        for(auto& button : buttons){
-            // Xử lý hover
-            button.isHovering = IsMouseInButton(button);
-
-             // Xử lý click
-            if(button.isHovering && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
-               // Thay đổi logic click nếu cần
-               backgroundColor = ColorEquals(backgroundColor, WHITE) ? DARKGRAY : WHITE;
-            }
-        }
-
-        BeginDrawing();
-            ClearBackground(backgroundColor);
-
-            // Vẽ từng nút
-             for(const auto& button : buttons){
-                  DrawTextButton(button);
-             }
-
-        EndDrawing();
-    }
-
-    CloseWindow();
-
-    return 0;
-}
