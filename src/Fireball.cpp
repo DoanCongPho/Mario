@@ -24,7 +24,8 @@ void Fireball::Update(float deltaTime) {
 
 void Fireball::Draw() const {
     if (!textures.empty()) {
-        DrawTexture(textures[currentFrame], position.x, position.y, WHITE);
+        float scale = 1.5f; // Adjust the scale factor as desired
+        DrawTextureEx(textures[currentFrame], position, 0.0f, scale, WHITE);
     }
 }
 
