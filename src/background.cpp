@@ -20,7 +20,25 @@ void HandleButtonClicks(std::vector<Button>& buttons, Texture2D& currentBackgrou
             }
             else if (button.GetText() == "PLAY GAME")
             {
-
+                InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Mario Game");
+                    loadAllAnimations();
+                    loadMusic();
+                    vector<Texture2D> walkingTextures = ResourcesManager::getInstance().getA("smallMario");
+                    vector<Texture2D> jumpingTextures = ResourcesManager::getInstance() .getA("smallMarioJump");
+                    vector<Texture2D> runningTextures= ResourcesManager::getInstance().getA("smallMarioRun");
+                    vector<Texture2D> tranfomationTextures = ResourcesManager::getInstance().getA("transToSuper");
+                    vector<Texture2D> superMarioWalk = ResourcesManager::getInstance().getA("superMario");
+                    vector<Texture2D> superMarioRun = ResourcesManager::getInstance().getA("superMarioRun");
+                    vector<Texture2D> superMarioJump =ResourcesManager::getInstance().getA("superMarioJump");
+                    vector<Texture2D> fireballs = ResourcesManager::getInstance().getA("fireballs");
+                    Player player({100.0f, 100.0f}, walkingTextures, jumpingTextures,runningTextures, tranfomationTextures, fireballs);
+                    Camera2D camera = initCamera(player);
+                    Map map1("Resources/Map1.tmx", "Collision");
+                    Map map2("Resources/Map2.tmx", "Collision");
+                    SetTargetFPS(60);
+                    SoundManager::getInstance().playMapMusic("Map1");
+                    RunGame(player, map1, camera);
+    
             }
             TraceLog(LOG_INFO, "Button text = ", button.GetText().c_str());
             button.setClicked(false);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="150" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="82">
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="150" height="20" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="83">
  <tileset firstgid="1" source="set.tsx"/>
  <tileset firstgid="118" source="../../../Mario(Test)/Mario/Resources/set.tsx"/>
  <imagelayer id="11" name="Background" offsetx="0.347436" offsety="-4.62445" repeatx="1">
@@ -34,9 +34,8 @@
   <object id="29" x="1632.33" y="415.565" width="254.768" height="31.324"/>
   <object id="30" x="1888.49" y="448.977" width="30.6279" height="29.9318"/>
   <object id="34" x="2045.89" y="514.286" width="161.039" height="28.5714"/>
-  <object id="35" x="2238.96" y="445.887" width="127.273" height="32.0346"/>
+  <object id="35" x="2209.73" y="445.887" width="157.716" height="32.0346"/>
   <object id="36" x="2272.73" y="352.381" width="60.6061" height="30.303"/>
-  <object id="37" x="2400.87" y="382.684" width="125.541" height="32.0346"/>
   <object id="38" x="2401.73" y="320.346" width="27.7056" height="29.4372"/>
   <object id="39" x="2272.73" y="287.446" width="125.541" height="30.303"/>
   <object id="40" x="2463.98" y="289.214" width="320.091" height="28.8184"/>
@@ -48,19 +47,17 @@
   <object id="46" x="3009.47" y="192.466" width="91.6015" height="29.8477"/>
   <object id="47" x="3042.03" y="289.222" width="445.078" height="29.1303"/>
   <object id="48" x="3488.93" y="256.717" width="30.2167" height="31.2554"/>
-  <object id="49" x="3520.42" y="224.509" width="668.33" height="29.8176"/>
+  <object id="49" x="3520.42" y="224.509" width="958.912" height="29.8176"/>
   <object id="51" x="4191.87" y="161.106" width="30.1424" height="63.3312"/>
   <object id="52" x="4546.36" y="223.368" width="253.612" height="30.9292"/>
   <object id="53" x="4640.89" y="127.845" width="29.103" height="107.057"/>
-  <object id="54" x="4800.96" y="0" width="107.057" height="604.588"/>
+  <object id="54" x="4800.96" y="0" width="107.057" height="642.892"/>
   <object id="55" x="2082.86" y="354.772" width="121.309" height="27.4662"/>
   <object id="57" x="2496.46" y="225.269" width="28.2947" height="94.6784"/>
   <object id="58" x="769.339" y="94.5793" width="29.6443" height="94.5793"/>
-  <object id="60" x="2209.26" y="446.934" width="31.1814" height="95.854"/>
-  <object id="61" x="2369.79" y="384.571" width="27.7168" height="95.854"/>
-  <object id="62" x="1954.93" y="607.81" width="1810.77" height="30.5603"/>
-  <object id="63" x="3754.55" y="609.987" width="1043.85" height="30.5721"/>
-  <object id="66" x="4534.87" y="748.289"/>
+  <object id="60" x="2209.26" y="479.813" width="31.1814" height="62.9753"/>
+  <object id="61" x="2369.79" y="384.571" width="155.578" height="95.854"/>
+  <object id="62" x="1954.93" y="607.81" width="2847.51" height="30.5603"/>
   <object id="70" x="2976.55" y="319.732" width="63.9464" height="31.9732"/>
   <object id="71" x="2496.95" y="310.597" width="28.9281" height="102.01"/>
   <object id="72" x="3839.83" y="514.616" width="28.9281" height="105.055"/>
@@ -70,6 +67,7 @@
   <object id="77" x="448.146" y="255.748" width="94.6348" height="31.2842"/>
   <object id="80" x="3905.83" y="191.616" width="92.2884" height="31.2842"/>
   <object id="81" x="4127.17" y="128.265" width="32.0663" height="31.2842"/>
+  <object id="82" x="3553.73" y="127.679" width="28.8798" height="30.3998"/>
  </objectgroup>
  <layer id="1" name="ground" width="150" height="20">
   <data encoding="csv">
