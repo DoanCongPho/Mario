@@ -13,7 +13,7 @@ void HandleButtonClicks(std::vector<Button>& buttons, Texture2D& currentBackgrou
                 currentBackground = background2;
                 CreateButtons(buttons, config, currentBackground);
             }
-            if (button.GetText() == "RETURN")
+            else if (button.GetText() == "RETURN")
             {
                 currentBackground = background1;
                 CreateButtons(buttons, config, currentBackground);
@@ -22,7 +22,7 @@ void HandleButtonClicks(std::vector<Button>& buttons, Texture2D& currentBackgrou
             {
                 InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Mario Game");
                     loadAllAnimations();
-                    loadMusic();
+                    
                     vector<Texture2D> walkingTextures = ResourcesManager::getInstance().getA("smallMario");
                     vector<Texture2D> jumpingTextures = ResourcesManager::getInstance() .getA("smallMarioJump");
                     vector<Texture2D> runningTextures= ResourcesManager::getInstance().getA("smallMarioRun");
@@ -39,8 +39,9 @@ void HandleButtonClicks(std::vector<Button>& buttons, Texture2D& currentBackgrou
                     SoundManager::getInstance().playMapMusic("Map1");
                     RunGame(player, map1, camera);
     
+            }else if(button.GetText() == "EXIT"){
+                CloseWindow(); 
             }
-            TraceLog(LOG_INFO, "Button text = ", button.GetText().c_str());
             button.setClicked(false);
         }
     }

@@ -15,7 +15,7 @@ int main() {
     config.baseFontSize = 20.0f;
     config.baseScreenWidth = 640;
     config.baseScreenHeight = 480;
-    
+    loadMusic();
     int screenWidth = config.baseScreenWidth;
     int screenHeight = config.baseScreenHeight;
     InitWindow(screenWidth, screenHeight, "Dynamic Background & Text");
@@ -37,8 +37,9 @@ int main() {
     CreateButtons(buttons, config, currentBackground);
 
     SetTargetFPS(60);
-
+    SoundManager::getInstance().playMapMusic("INTRO");
     while (!WindowShouldClose()) {
+        SoundManager::getInstance().updateMusic();
         int currentScreenWidth = GetScreenWidth();
         int currentScreenHeight = GetScreenHeight();
 
