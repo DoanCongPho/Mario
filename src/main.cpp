@@ -83,25 +83,24 @@ int main()
 
 #include "app_config.h"
 #include "button.h"
-#include "../include/layout.h"
-#include "../include/background.h"
+#include "layout.h"
+#include "background.h"
 
 int main() {
     Config config;
     config.backgroundColor = DARKGRAY;
     config.fontSize = 20;
-    config.backgroundScale = 1.0f;
     config.baseFontSize = 20.0f;
-    config.baseScreenWidth = 800;
-    config.baseScreenHeight = 600;
+    config.baseScreenWidth = 640;
+    config.baseScreenHeight = 480;
 
     int screenWidth = config.baseScreenWidth;
     int screenHeight = config.baseScreenHeight;
     InitWindow(screenWidth, screenHeight, "Dynamic Background & Text");
     SetWindowState(FLAG_WINDOW_RESIZABLE);
 
-    Texture2D background1 = LoadTexture("../Resources/images/menu/Untitled.png");
-    Texture2D background2 = LoadTexture("../Resources/images/menu/menu.png");
+    Texture2D background1 = LoadTexture("../Resources/images/menu/menu.png");
+    Texture2D background2 = LoadTexture("../Resources/images/menu/Option.png");
 
     if (background1.id == 0) {
         background1 = LoadTextureFromImage(GenImageColor(screenWidth, screenHeight, DARKGRAY));
@@ -149,7 +148,7 @@ int main() {
 
         DrawTextureEx(currentBackground, Vector2{offsetX, offsetY}, 0.0f, scale, WHITE);
 
-        for (const auto &button: buttons) {
+        for (auto &button: buttons) {
             button.DrawButton(config);
         }
         EndDrawing();
