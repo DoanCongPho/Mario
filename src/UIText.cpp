@@ -3,7 +3,7 @@
 #include <iostream>
 #include <utility>
 
-UIText::UIText(std::string  text, Vector2 position, int fontSize, bool canPress)
+UIText::UIText(std::string text, Vector2 position, int fontSize, bool canPress)
     : text(std::move(text)), originalPosition(position), fontSize(fontSize)
     , scaleX(1.0f), scaleY(1.0f), isHovered(false), canPress(canPress), isClicked(false) {}
 

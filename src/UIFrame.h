@@ -2,7 +2,6 @@
 #define UIFRAME_H
 
 #include <string>
-
 #include "IDrawable.h"
 #include "TextureBackground.h"
 #include <vector>

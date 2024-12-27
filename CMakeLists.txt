@@ -23,10 +23,15 @@ add_executable(${PROJECT_NAME} src/main.cpp
         src/ResourcesManager.cpp
         src/Map.hpp
         src/Map.cpp
-        src/Player.hpp
-        src/Player.cpp
         src/Fireball.cpp
         src/Fireball.hpp
+        src/app_config.h
+        src/button.cpp
+        src/button.h
+        src/layout.cpp
+        src/layout.h
+        src/background.cpp
+        src/background.h
 )
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib tmx)
 add_custom_command(

@@ -1,6 +1,6 @@
 #include "Player.hpp"
 #include <cmath>
-#include <cstring>
+#include <bits/algorithmfwd.h>
 
 constexpr float GRAVITY = 1200.0f;
 constexpr float JUMP_VELOCITY = 600.0f;

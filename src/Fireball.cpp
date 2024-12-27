@@ -12,7 +12,6 @@ Fireball::Fireball(Vector2 startPosition, Vector2 startVelocity, std::vector<Tex
 void Fireball::Update(float deltaTime) {
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
-
     frameCounter += deltaTime;
     if (frameCounter >= frameTime) {
         frameCounter = 0.0f;

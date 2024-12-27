@@ -11,7 +11,6 @@
 class Game {
 private:
     UIFrame frame;
-    bool changeBackground = true;
 public:
     Game();
     ~Game();
@@ -19,7 +18,6 @@ public:
     void Run();
     void HandleInput();
     void DrawScene();
-    void AddMainMenuElements();
 };
 
 Camera2D initCamera(Player &player); 
