@@ -64,3 +64,54 @@ void Game::DrawScene() {
     frame.draw();
     EndDrawing();
 }
+
+
+Camera2D initCamera(Player &player){
+    Camera2D camera;
+    camera.target = {
+        player.position.x + player.size.x / 2.0f,
+        player.position.y + player.size.y / 2.0f
+    };
+    camera.offset = (Vector2){ SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f };
+    camera.rotation = 0.0;
+    camera.zoom = 1.0;
+    return camera;
+}
+
+
+void RunGame(Player& player, Map& map, Camera2D& camera) {
+    while (!WindowShouldClose()) {
+        float delta = GetFrameTime();
+
+        // Handle input
+        if (IsKeyPressed(KEY_T)) {
+            player.StartTransformation(
+                ResourcesManager::getInstance().getA("superMario"),
+                ResourcesManager::getInstance().getA("superMarioJump"),
+                ResourcesManager::getInstance().getA("superMarioRun")
+            );
+        }
+        if (IsKeyPressed(KEY_R)) {
+            if (player.fireballsActive)
+                player.DeactivateFireballs();
+            else
+                player.ActivateFireballs();
+        }
+
+        // Update game state
+        player.Update(delta, map.GetCollisionBoxes());
+        camera.target = {
+            player.position.x + player.size.x / 2.0f,
+            player.position.y + player.size.y / 2.0f
+        };
+
+        // Render the frame
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        BeginMode2D(camera);
+        map.Render();
+        player.Draw();
+        EndMode2D();
+        EndDrawing();
+    }
+}
