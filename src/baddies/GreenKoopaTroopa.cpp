@@ -10,5 +10,6 @@ GreenKoopaTroopa::GreenKoopaTroopa(Vector2 position, Vector2 dimension,
   dim = dimension;
   vel = velocity;
   maxFrames = 2;
+  animationTextureName = "greenKoopaTroopa";
   textureNameTemplate = "GreenKoopaTroopa_%d";
 }

@@ -11,4 +11,5 @@ Goomba::Goomba(Vector2 position, Vector2 dimension, Vector2 velocity,
   vel = velocity;
   maxFrames = 2;
   textureNameTemplate = "Goomba_%d";
+  animationTextureName = "goomba";
 }

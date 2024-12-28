@@ -15,7 +15,7 @@ MontyMole::MontyMole(Vector2 position, Vector2 dimension, Vector2 velocity,
   jumpTime = GetRandomValue(2, maxJumpTime);
 }
 
-void MontyMole::updatePosition(const float deltaTime) {
+void MontyMole::updatePosition(const float deltaTime, const std::vector<CollisionBox>& collisionBoxes) {
   jumpTimeAcum += deltaTime;
 
   if (jumpTimeAcum >= static_cast<float>(jumpTime)) {
@@ -24,7 +24,7 @@ void MontyMole::updatePosition(const float deltaTime) {
     vel.y = -200;
   }
 
-  Baddie::updatePosition(deltaTime);
+  Baddie::updatePosition(deltaTime, collisionBoxes);
 }
 void MontyMole::followTheLeader(Sprite *sprite) {
   if (pos.x < sprite->getPos().x - 60) {

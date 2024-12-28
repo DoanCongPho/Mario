@@ -11,6 +11,7 @@
 class Baddie : public Sprite {
 protected:
   std::string textureNameTemplate = "Unknown_%d";
+  std::string animationTextureName = "unknown";
   bool affectedByGravity = true;
   float dyingFrameAcum = 0;
   float dyingFrameTime = 0.1;
@@ -24,8 +25,8 @@ public:
   Baddie();
   ~Baddie() override = default;
 
-  void update(float deltaTime) override;
-  virtual void updatePosition(float deltaTime);
+  void update(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) override;
+  virtual void updatePosition(float deltaTime, const std::vector<CollisionBox>& collisionBoxes);
 
   void draw() const override;
   void activateWithPlayerProximity(Player &player);

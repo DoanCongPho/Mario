@@ -12,5 +12,5 @@ BlueKoopaTroopa::BlueKoopaTroopa(Vector2 position, Vector2 dimensions,
   dim = dimensions;
   vel = velocity;
   maxFrames = 2;
-  textureNameTemplate = "BlueKoopaTroopa_%d";
+  animationTextureName = "blueKoopaTroopa";
 }

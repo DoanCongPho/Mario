@@ -23,7 +23,7 @@ public:
                       Color color);
   ~JumpingPiranhaPlant() override = default;
 
-  void updatePosition(float deltaTime) override;
+  void updatePosition(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) override;
 };
 
 #endif // JUMPINGPIRANHAPLANT_H

@@ -10,5 +10,6 @@ BuzzyBeetle::BuzzyBeetle(Vector2 position, Vector2 dimensions, Vector2 velocity,
   dim = dimensions;
   vel = velocity;
   maxFrames = 2;
+  animationTextureName = "buzzyBeetle";
   textureNameTemplate = "BuzzyBeetle_%d";
 }

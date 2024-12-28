@@ -16,9 +16,9 @@ JumpingPiranhaPlant::JumpingPiranhaPlant(Vector2 position, Vector2 dimension,
   secondaryState = SPRITE_STATE_INVULNERABLE;
 }
 
-void JumpingPiranhaPlant::updatePosition(float deltaTime) {
+void JumpingPiranhaPlant::updatePosition(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) {
   if (state != SPRITE_STATE_ACTIVE) {
-    Baddie::updatePosition(deltaTime);
+    Baddie::updatePosition(deltaTime, collisionBoxes);
     return;
   }
 

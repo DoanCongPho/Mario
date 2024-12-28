@@ -16,7 +16,7 @@ public:
   MontyMole(Vector2 position, Vector2 dimension, Vector2 velocity, Color color);
   ~MontyMole() override = default;
 
-  void updatePosition(float deltaTime) override;
+  void updatePosition(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) override;
   void followTheLeader(Sprite *sprite) override;
 };
 

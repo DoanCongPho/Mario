@@ -9,7 +9,9 @@ Muncher::Muncher(Vector2 position, Vector2 dimension, Vector2 velocity,
   pos = position;
   dim = dimension;
   vel = Vector2 { 0, 0 };
+  affectedByGravity = false;
   maxFrames = 2;
   textureNameTemplate = "Muncher_%d";
+  animationTextureName = "muncher";
   state = SPRITE_STATE_INVULNERABLE;
 }

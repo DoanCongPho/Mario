@@ -2,11 +2,34 @@
 #include "Map.hpp"
 #include <cstring>
 
+#include "baddies/BlueKoopaTroopa.h"
+#include "baddies/BobOmb.h"
+#include "baddies/BuzzyBeetle.h"
+#include "baddies/Goomba.h"
+#include "baddies/GreenKoopaTroopa.h"
+#include "baddies/Muncher.h"
+#include "baddies/Rex.h"
+
 
 Map::Map(const char* mapFile, const char* objectGroupName) {
     RenderTmxMapToFramebuf(mapFile, &mapFrameBuffer);
     LoadCollisionData(mapFile, objectGroupName);
+
+    baddies.push_back(new Goomba(Vector2 { 140, 200 }, Vector2 { 32, 32 }, Vector2 { 40, 0 }, WHITE));
+    baddies.push_back(new BlueKoopaTroopa(Vector2 { 3500, 350 }, Vector2 { 32, 54 }, Vector2 { 40, 0 }, WHITE));
+    baddies.push_back(new GreenKoopaTroopa(Vector2 { 3540, 350 }, Vector2 { 32, 54 }, Vector2 { 40, 0 }, WHITE));
+    baddies.push_back(new BlueKoopaTroopa(Vector2 { 2500, 350 }, Vector2 { 32, 54 }, Vector2 { 40, 0 }, WHITE));
+    baddies.push_back(new GreenKoopaTroopa(Vector2 { 2549, 350 }, Vector2 { 32, 54 }, Vector2 { 40, 0 }, WHITE));
+    baddies.push_back(new Rex(Vector2 { 3580, 350 }, Vector2 { 40, 64 }, Vector2 { 40, 0 }, WHITE));
+
+    for (int i = 0; i < 5; i++) {
+      baddies.push_back(new BobOmb(Vector2 { 1510.0f + 20.0f * (float)i, 0 }, Vector2 { 24, 30 }, Vector2 { 30, 0 }, WHITE));
+    }
+
+    baddies.push_back(new BuzzyBeetle(Vector2 { 2500, 0 }, Vector2 { 32, 32 }, Vector2 { 30, 0 }, WHITE));
+    // baddies.push_back(new Muncher(Vector2 { 3500, 350 }, Vector2 { 32, 30 }, Vector2 { 0, 0 }, WHITE));
 }
+
 Map::~Map() {
     UnloadRenderTexture(mapFrameBuffer);
 }
@@ -40,11 +63,11 @@ void Map::Render() {
                    (Vector2){0, 0},
                    WHITE
                    );
-    for (const auto& box : collisionBoxes) {
-        DrawRectangleLines(
-                           (int)box.rect.x, (int)box.rect.y, (int)box.rect.width, (int)box.rect.height, RED
-                           );
-    }
+//    for (const auto& box : collisionBoxes) {
+//        DrawRectangleLines(
+//                           (int)box.rect.x, (int)box.rect.y, (int)box.rect.width, (int)box.rect.height, RED
+//                           );
+//    }
 }
 const std::vector<CollisionBox>& Map::GetCollisionBoxes() const {
     return collisionBoxes;
@@ -245,7 +268,18 @@ void loadAllAnimations() {
     ResourcesManager::getInstance().LoadAnimationTextures(superMarioJump, 1);
     ResourcesManager::getInstance().LoadAnimationTextures(superMario, 3);
     ResourcesManager::getInstance().LoadAnimationTextures(fireballs, 4);
+    ResourcesManager::getInstance().LoadAnimationTextures(rex2, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(rex1, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(puft, 4);
+    ResourcesManager::getInstance().LoadAnimationTextures(goomba, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(blueKoopaTroopa, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(greenKoopaTroopa, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(bobomb, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(buzzyBeetle, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(muncher, 2);
+    ResourcesManager::getInstance().LoadAnimationTextures(marioDie, 1);
 }
+
 Rectangle GetPlayerCollisionBox(const Player& player) {
     return Rectangle{player.position.x, player.position.y, player.size.x, player.size.y};
 }

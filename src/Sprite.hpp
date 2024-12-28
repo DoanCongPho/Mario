@@ -1,6 +1,7 @@
 #ifndef Sprite_hpp
 #define Sprite_hpp
 
+#include "CollisionBox.hpp"
 #include "CollisionProbe.h"
 #include "CollisionType.h"
 #include "raylib.h"
@@ -40,7 +41,7 @@ public:
   Sprite(const string &texturePath, float x, float y);
   virtual ~Sprite();
 
-  virtual void update(float deltaTime);
+  virtual void update(float deltaTime, const std::vector<CollisionBox>& collisionBoxes);
   virtual void draw() const;
 
   Vector2 &getPos();
@@ -52,7 +53,11 @@ public:
   Rectangle getRect() const;
 
   CollisionType checkCollision(const Sprite *sprite) const;
+  CollisionType checkCollision(const Rectangle& rect) const;
   virtual void updateCollisionProbes();
+
+  SpriteState getState() { return state; }
+  SpriteState getSecondaryState() { return secondaryState; }
 };
 
 #endif

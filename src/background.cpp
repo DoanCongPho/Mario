@@ -36,8 +36,8 @@ void HandleButtonClicks(std::vector<Button>& buttons, Texture2D& currentBackgrou
                     Map map1("Resources/Map1.tmx", "Collision");
                     Map map2("Resources/Map2.tmx", "Collision");
                     SetTargetFPS(60);
-                    SoundManager::getInstance().playMapMusic("Map1");
-                    RunGame(player, map1, camera);
+                    SoundManager::getInstance().playMapMusic("Map2");
+                    RunGame(player, map2, camera);
     
             }else if(button.GetText() == "EXIT"){
                 CloseWindow(); 

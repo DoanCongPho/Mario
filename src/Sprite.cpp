@@ -15,7 +15,7 @@ Sprite::Sprite(const string &texturePath, float x, float y) {
 
 Sprite::~Sprite() { UnloadTexture(texture); }
 
-void Sprite::update(float deltaTime) {
+void Sprite::update(float deltaTime, const std::vector<CollisionBox>& collisionBoxes) {
   pos.x += vel.x * deltaTime;
   pos.y += vel.y * deltaTime;
 }
@@ -49,6 +49,10 @@ CollisionType Sprite::checkCollision(const Sprite *sprite) const {
 
   auto rect = sprite->getRect();
 
+  return checkCollision(rect);
+}
+
+CollisionType Sprite::checkCollision(const Rectangle& rect) const {
   if (cpNorth.collided(rect)) {
     return COLLISION_TYPE_NORTH;
   }
@@ -71,13 +75,17 @@ CollisionType Sprite::checkCollision(const Sprite *sprite) const {
 void Sprite::updateCollisionProbes() {
   cpNorth.setX(pos.x + dim.x / 2 - cpNorth.getWidth() / 2);
   cpNorth.setY(pos.y);
+  cpNorth.setWidth(dim.x);
 
   cpSouth.setX(pos.x + dim.x / 2 - cpSouth.getWidth() / 2);
   cpSouth.setY(pos.y + dim.y - cpSouth.getHeight());
+  cpSouth.setWidth(dim.x);
 
   cpEast.setX(pos.x + dim.x - cpEast.getWidth());
   cpEast.setY(pos.y + dim.y / 2 - cpEast.getHeight() / 2);
+  cpEast.setHeight(dim.y);
 
   cpWest.setX(pos.x);
   cpWest.setY(pos.y + dim.y / 2 - cpWest.getHeight() / 2);
+  cpWest.setHeight(dim.y);
 }

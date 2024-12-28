@@ -337,7 +337,7 @@
   </tile>
  </tileset>
  <tileset firstgid="112" source="set.tsx"/>
- <tileset firstgid="229" source="../../../Mario(Test)/Mario/Resources/set.tsx"/>
+ <tileset firstgid="229" source="set.tsx"/>
  <imagelayer id="10" name="Background" offsetx="4.6729" offsety="0" repeatx="1">
   <image source="images/backgrounds/background2.png" width="1024" height="864"/>
  </imagelayer>

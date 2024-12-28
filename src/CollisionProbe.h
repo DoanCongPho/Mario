@@ -10,7 +10,7 @@
 class CollisionProbe {
 private:
   Rectangle rect;
-  Color color = WHITE;
+  Color color = RED;
 
 public:
   CollisionProbe() : rect(Rectangle { 0, 0, 5, 5 }) {}
@@ -22,11 +22,13 @@ public:
       : rect(Rectangle { x, y, 5, 5 }), color(color) {}
   ~CollisionProbe() = default;
 
-  bool collided(Rectangle &other) const;
+  [[nodiscard]] bool collided(const Rectangle &other) const;
   void draw() const;
 
   [[nodiscard]] float getWidth() const { return rect.width; }
   [[nodiscard]] float getHeight() const { return rect.height; }
+  void setWidth(const float width) { this->rect.width = width; }
+  void setHeight(const float height) { this->rect.height = height; }
 
   void setPosition(const Vector2 position) {
     this->rect.x = position.x;

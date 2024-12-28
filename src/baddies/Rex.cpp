@@ -10,7 +10,7 @@ Rex::Rex(Vector2 position, Vector2 dimension, Vector2 velocity, Color color) {
   vel = velocity;
   hitsToDie = 2;
   maxFrames = 2;
-  textureNameTemplate = "Rex_2_%d"; // start with its full form first
+  animationTextureName = "rex2";
 }
 
 void Rex::onHit() {
@@ -28,7 +28,7 @@ void Rex::onHit() {
     frameTime /= 2;
 
     state = SPRITE_STATE_HIT;
-    textureNameTemplate = "Rex_1_%d"; // put it into its smaller variant
+    animationTextureName = "rex1";
 
     updateCollisionProbes();
   }

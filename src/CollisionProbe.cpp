@@ -4,9 +4,10 @@
 
 #include "CollisionProbe.h"
 
-bool CollisionProbe::collided(Rectangle &other) const {
+bool CollisionProbe::collided(const Rectangle &other) const {
   return CheckCollisionRecs(rect, other);
 }
+
 void CollisionProbe::draw() const {
   DrawRectangle(rect.x, rect.y, rect.width, rect.height, color);
 }

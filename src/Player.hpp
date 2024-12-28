@@ -25,6 +25,7 @@ public:
         JUMPING,
         STANDING,
         TRANSFORMING,
+        DIE,
     };
     void StartTransformation(std::vector<Texture2D>& newWalkingTextures, std::vector<Texture2D>& newJumpingTextures,  std::vector<Texture2D>& newRunningTextures);
     void fireballsAvaiable();
@@ -42,12 +43,13 @@ public:
     Vector2 &GetPosition();
     Vector2 &GetSize();
     Vector2 &GetVelocity();
+    std::vector<Fireball> &GetActiveFireballs() { return activeFireballs; }
 private:
     float transformationFrameDelay = 0.35f;
     float transformationTimer = 0.0f;
     Vector2 spawnPoint;
     State state;
-    std::vector<Fireball> activeFireballs; 
+    std::vector<Fireball> activeFireballs;
     std::vector<Texture2D>& walkingTextures;
     std::vector<Texture2D>& jumpingTextures;
     std::vector<Texture2D>& runningTextures;
