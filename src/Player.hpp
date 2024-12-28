@@ -1,10 +1,10 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
-#include <vector>
-#include <raylib.h>
 #include "CollisionBox.hpp"
 #include "Fireball.hpp"
+
+constexpr float GRAVITY = 1200.0f;
 
 
 class Player {
@@ -38,6 +38,10 @@ public:
     void SetState(State newState);
     void ActivateFireballs();
     void DeactivateFireballs();
+
+    Vector2 &GetPosition();
+    Vector2 &GetSize();
+    Vector2 &GetVelocity();
 private:
     float transformationFrameDelay = 0.35f;
     float transformationTimer = 0.0f;

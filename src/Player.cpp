@@ -1,8 +1,7 @@
 #include "Player.hpp"
+#include <algorithm>
 #include <cmath>
-#include <cstring> 
 
-constexpr float GRAVITY = 1200.0f;
 constexpr float JUMP_VELOCITY = 600.0f;
 constexpr float ACCELERATION = 600.0f; // Acceleration value
 constexpr float MAX_VELOCITY = 300.0f; // Max walking velocity
@@ -108,86 +107,86 @@ void Player::StartTransformation( std::vector<Texture2D>& newWalkingTextures,  s
     position.y -= fabs(size.y - preSize.y);
 }
 void Player::HandleMovement(float delta) {
-    acceleration = {0.0f, 0.0f}; // Reset acceleration each frame
-    float maxVelocity = MAX_VELOCITY;
-    if (IsKeyDown(KEY_LEFT_SHIFT) && (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))) {
-        maxVelocity = RUNNING_VELOCITY;
-        acceleration.x = 1.1*ACCELERATION;
-        state = RUNNING;
-    }else if (IsKeyDown(KEY_LEFT_SHIFT) && (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))) {
-        maxVelocity = RUNNING_VELOCITY;
-        acceleration.x = -1.1*ACCELERATION;
-        state = RUNNING;
-    }else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
-        acceleration.x = ACCELERATION;
-        faceRight = true;
-        state = WALKING;
-    } else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
-        acceleration.x = -ACCELERATION;
-        faceRight = false;
-        state = WALKING;
-    } else {
-        acceleration.x = -velocity.x * 5.0f; // Friction factor
-        if (std::fabs(velocity.x) < 10.0f) {
-            velocity.x = 0.0f;
-            if (onGround) {
-                state = STANDING;
-                currentFrame = 0;
-            }
-        }
+  acceleration = {0.0f, 0.0f}; // Reset acceleration each frame
+  float maxVelocity = MAX_VELOCITY;
+  if (IsKeyDown(KEY_LEFT_SHIFT) && (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D))) {
+    maxVelocity = RUNNING_VELOCITY;
+    acceleration.x = 1.1 * ACCELERATION;
+    state = RUNNING;
+  } else if (IsKeyDown(KEY_LEFT_SHIFT) &&
+             (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A))) {
+    maxVelocity = RUNNING_VELOCITY;
+    acceleration.x = -1.1 * ACCELERATION;
+    state = RUNNING;
+  } else if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) {
+    acceleration.x = ACCELERATION;
+    faceRight = true;
+    state = WALKING;
+  } else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) {
+    acceleration.x = -ACCELERATION;
+    faceRight = false;
+    state = WALKING;
+  } else {
+    acceleration.x = -velocity.x * 5.0f; // Friction factor
+    if (std::fabs(velocity.x) < 10.0f) {
+      velocity.x = 0.0f;
+      if (onGround) {
+        state = STANDING;
+        currentFrame = 0;
+      }
     }
-    
-    if ((IsKeyPressed(KEY_SPACE) || IsKeyDown(KEY_SPACE)) && onGround) {
-        velocity.y = -JUMP_VELOCITY;
-        onGround = false;
-    }
-    if (!onGround) {
-        acceleration.y = GRAVITY;
-        state = JUMPING;
-    }
-    velocity.x += acceleration.x * delta;
-    velocity.y += acceleration.y * delta;
-    velocity.x = std::clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY);
+  }
+
+  if ((IsKeyPressed(KEY_SPACE) || IsKeyDown(KEY_SPACE)) && onGround) {
+    velocity.y = -JUMP_VELOCITY;
+    onGround = false;
+  }
+  if (!onGround) {
+    acceleration.y = GRAVITY;
+    state = JUMPING;
+  }
+  velocity.x += acceleration.x * delta;
+  velocity.y += acceleration.y * delta;
+  velocity.x = std::clamp(velocity.x, -MAX_VELOCITY, MAX_VELOCITY);
 }
 
-void Player::HandleCollisions(float delta, const std::vector<CollisionBox>& collisionBoxes) {
-    Vector2 nextPosition = {
-        position.x + velocity.x * delta,
-        position.y + velocity.y * delta
-    };
-    
-    Rectangle verticalBox = {position.x, nextPosition.y, size.x, size.y};
-    bool groundCollisionDetected = false;
-    for (const auto& box : collisionBoxes) {
-        if (CheckCollisionRecs(verticalBox, box.rect)) {
-            if (velocity.y > 0) {
-                nextPosition.y = box.rect.y - size.y;
-                onGround = true;
-                groundCollisionDetected = true;
-            } else if (velocity.y < 0) {
-                nextPosition.y = box.rect.y + box.rect.height;
-                velocity.y = 0;
-            }
-        }
+void Player::HandleCollisions(float delta,
+                              const std::vector<CollisionBox> &collisionBoxes) {
+  Vector2 nextPosition = {position.x + velocity.x * delta,
+                          position.y + velocity.y * delta};
+
+  Rectangle verticalBox = {position.x, nextPosition.y, size.x, size.y};
+  bool groundCollisionDetected = false;
+  for (const auto &box : collisionBoxes) {
+    if (CheckCollisionRecs(verticalBox, box.rect)) {
+      if (velocity.y > 0) {
+        nextPosition.y = box.rect.y - size.y;
+        onGround = true;
+        groundCollisionDetected = true;
+      } else if (velocity.y < 0) {
+        nextPosition.y = box.rect.y + box.rect.height;
+        velocity.y = 0;
+      }
     }
-    if (!groundCollisionDetected) {
-        onGround = false;
+  }
+  if (!groundCollisionDetected) {
+    onGround = false;
+  }
+  position.y = nextPosition.y;
+
+  Rectangle horizontalBox = {nextPosition.x, position.y, size.x, size.y};
+  for (const auto &box : collisionBoxes) {
+    if (CheckCollisionRecs(horizontalBox, box.rect)) {
+      if (velocity.x > 0) {
+        nextPosition.x = box.rect.x - size.x;
+      } else if (velocity.x < 0) {
+        nextPosition.x = box.rect.x + box.rect.width;
+      }
+      velocity.x = 0;
+      break;
     }
-    position.y = nextPosition.y;
-    
-    Rectangle horizontalBox = {nextPosition.x, position.y, size.x, size.y};
-    for (const auto& box : collisionBoxes) {
-        if (CheckCollisionRecs(horizontalBox, box.rect)) {
-            if (velocity.x > 0) {
-                nextPosition.x = box.rect.x - size.x;
-            } else if (velocity.x < 0) {
-                nextPosition.x = box.rect.x + box.rect.width;
-            }
-            velocity.x = 0;
-            break;
-        }
-    }
-    position.x = nextPosition.x;
+  }
+  position.x = nextPosition.x;
 }
 
 void Player::UpdateFrame(float delta) {
@@ -208,20 +207,23 @@ void Player::UpdateFrame(float delta) {
             
         }
     }
-    // Handle other states (walking, jumping, running)
-    else if (frameCounter >= frameTime) {
-        frameCounter = 0.0f;
-        if (state == WALKING) {
-            currentFrame = (currentFrame + 1) % walkingTextures.size();
-            size = {(float)walkingTextures[0].width, (float)walkingTextures[0].height};
-        } else if (state == JUMPING) {
-            currentFrame = (currentFrame + 1) % jumpingTextures.size();
-            size = {(float)jumpingTextures[0].width, (float)jumpingTextures[0].height};
-        } else if (state == RUNNING) {
-            currentFrame = (currentFrame + 1) % runningTextures.size();
-            size = {(float)runningTextures[0].width, (float)runningTextures[0].height};
-        }
+  // Handle other states (walking, jumping, running)
+  else if (frameCounter >= frameTime) {
+    frameCounter = 0.0f;
+    if (state == WALKING) {
+      currentFrame = (currentFrame + 1) % walkingTextures.size();
+      size = {(float)walkingTextures[0].width,
+              (float)walkingTextures[0].height};
+    } else if (state == JUMPING) {
+      currentFrame = (currentFrame + 1) % jumpingTextures.size();
+      size = {(float)jumpingTextures[0].width,
+              (float)jumpingTextures[0].height};
+    } else if (state == RUNNING) {
+      currentFrame = (currentFrame + 1) % runningTextures.size();
+      size = {(float)runningTextures[0].width,
+              (float)runningTextures[0].height};
     }
+  }
 }
 
 void Player::Draw() const {
@@ -250,10 +252,12 @@ void Player::Draw() const {
     DrawFireballs();
 }
 
-Player::State Player::GetState() const {
-    return state;
-}
+Player::State Player::GetState() const { return state; }
 
-void Player::SetState(Player::State newState) {
-    state = newState;
-}
+void Player::SetState(Player::State newState) { state = newState; }
+
+Vector2 &Player::GetPosition() { return position; }
+
+Vector2 &Player::GetSize() { return size; }
+
+Vector2 &Player::GetVelocity() { return velocity; }

@@ -49,6 +49,7 @@ void SoundManager::updateMusic() {
         UpdateMusicStream(currentMusic);
     }
 }
+
 void loadMusic(){
     SoundManager::getInstance().addMapMusic("Map2", "Resources/musics/music3.mp3");
     SoundManager::getInstance().addMapMusic("Map1", "Resources/musics/music2.mp3"); SoundManager::getInstance().addMapMusic("INTRO", "Resources/musics/music1.mp3");

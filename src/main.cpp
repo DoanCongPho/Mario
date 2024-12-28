@@ -1,12 +1,12 @@
 #include "raylib.h"
 #include <string>
 #include <vector>
-#include <algorithm>
 
 #include "app_config.h"
 #include "button.h"
 #include "layout.h"
 #include "background.h"
+#include "Sound.h"
 
 int main() {
     Config config;
